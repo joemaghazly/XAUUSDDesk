@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15130F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Lab — The Desk</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+:root{
+  --bg:#15130F; --panel:#1E1B16; --raise:#262119; --rule:#3A3229; --rule2:#2C2620;
+  --text:#EDE6D6; --dim:#948A78; --faint:#6B6355;
+  --brass:#CF9B3F; --jade:#7FA981; --clay:#C06B54; --steel:#6E8B9B;
+  --disp:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;
+  padding-bottom:40px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+
+.desknav{background:var(--panel);border-bottom:1px solid var(--rule2)}
+.desknav-in{max-width:1120px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.desknav-in::-webkit-scrollbar{display:none}
+.desknav-mark{font-family:var(--disp);font-weight:800;font-size:12.5px;letter-spacing:.02em;display:flex;align-items:center;gap:7px;
+  margin-right:10px;color:var(--text);text-decoration:none;flex:none}
+.desknav-mark .ingot{width:16px;height:10px}
+.desknav-item{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  text-decoration:none;padding:7px 12px;border-radius:100px;white-space:nowrap;transition:color .15s,background .15s;flex:none}
+.desknav-item:hover{color:var(--text)}
+.desknav-item[data-here="1"]{color:var(--bg);background:var(--brass);font-weight:600}
+.ingot{width:22px;height:13px;background:linear-gradient(150deg,#E8BC66,#B97F27);
+  clip-path:polygon(14% 0,86% 0,100% 100%,0 100%);border-radius:1px;flex:none}
+
+.top{padding:26px 0 0}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+h2{font-family:var(--disp);font-weight:700;font-size:clamp(23px,4vw,29px);letter-spacing:-.02em;margin:8px 0 0}
+.lede{font-size:13.5px;color:var(--dim);max-width:68ch;line-height:1.68;margin-top:10px}
+
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+@media (max-width:860px){ .sgrid{grid-template-columns:1fr} }
+.scard{background:var(--panel);border:1px solid var(--rule2);border-radius:8px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.scard.active{border-color:rgba(207,155,63,.4)}
+.scard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sym{font-family:var(--disp);font-weight:800;font-size:20px;letter-spacing:-.01em}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--dim);
+  border:1px solid var(--rule2);padding:4px 9px;border-radius:100px;white-space:nowrap;background:rgba(0,0,0,.2)}
+.tag.live{color:var(--jade);border-color:rgba(127,169,129,.4);background:rgba(127,169,129,.07)}
+.tag.queued{color:var(--faint)}
+.scard p{font-size:13px;color:var(--dim);line-height:1.62}
+.scard-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:14px;border-top:1px solid var(--rule2)}
+.mini{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--brass);
+  border:1px solid rgba(207,155,63,.35);padding:8px 13px;border-radius:100px;text-decoration:none;flex:1;text-align:center}
+.mini:hover{background:rgba(207,155,63,.08)}
+.mini.dim{color:var(--faint);border-color:var(--rule2);pointer-events:none}
+
+.card{background:var(--panel);border:1px solid var(--rule2);border-radius:8px;padding:20px;margin-top:14px}
+.frow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--rule2)}
+.frow:last-child{border-bottom:none}
+.frow-k{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.frow-v{font-family:var(--mono);font-size:12.5px;color:var(--text);text-align:right}
+
+.foot{margin-top:48px;padding:20px 0 10px;border-top:1px solid var(--rule2);
+  font-size:12px;color:var(--faint);line-height:1.75;max-width:70ch}
+</style>
+</head>
+<body>
+<div class="desknav"><div class="desknav-in">
+  <a href="index.html" class="desknav-mark"><span class="ingot"></span>THE DESK</a>
+  <a href="lab.html" class="desknav-item" data-here="1">Lab</a>
+  <a href="indicators.html" class="desknav-item" data-here="0">Indicators</a>
+  <a href="journal.html" class="desknav-item" data-here="0">Journal</a>
+  <a href="session-board.html" class="desknav-item" data-here="0">Session Board</a>
+</div></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eye">Symbol frameworks</div>
+    <h2>The Lab</h2>
+    <p class="lede">Each symbol gets its own session structure, indicator set and entry rules. XAUUSD's is built out — Journal and Session Board both run on it. SPX and USDJPY are queued: send over the session windows and the rules the way gold's were built, and the same toolkit gets built for each.</p>
+  </header>
+
+  <div class="sgrid">
+
+    <div class="scard active">
+      <div class="scard-top"><div class="sym">XAUUSD</div><span class="tag live">Live</span></div>
+      <p>Gold. Asian range 01:00–10:00 Beirut, London read 10:00–15:00, execution from the 15:00 VWAP anchor. Full framework, journal history, and today's board.</p>
+      <p class="lede" id="xauStat" style="margin-top:-4px;font-size:12px"></p>
+      <div class="scard-links">
+        <a class="mini" href="journal.html">Journal</a>
+        <a class="mini" href="session-board.html">Session Board</a>
+      </div>
+    </div>
+
+    <div class="scard">
+      <div class="scard-top"><div class="sym">SPX</div><span class="tag queued">Not started</span></div>
+      <p>S&amp;P 500. No session windows, indicators or entry rules defined yet — nothing to build against until those exist.</p>
+      <div class="scard-links"><span class="mini dim">Framework not started</span></div>
+    </div>
+
+    <div class="scard">
+      <div class="scard-top"><div class="sym">USDJPY</div><span class="tag queued">Not started</span></div>
+      <p>Same situation — a session read and a rule set come first, then the journal and board follow the same build as gold.</p>
+      <div class="scard-links"><span class="mini dim">Framework not started</span></div>
+    </div>
+
+  </div>
+
+  <section style="margin-top:44px">
+    <div class="eye">What a new symbol needs</div>
+    <h2>Before SPX or USDJPY can get their own board</h2>
+    <p class="lede">The gold toolkit isn't generic — it's built on gold's specific rules. A new symbol needs its own answers to the same handful of questions before the same journal and board can exist for it.</p>
+    <div class="card">
+      <div class="frow"><div class="frow-k">Session structure</div><div class="frow-v">Which hours are the reference range, which are read-only, when does execution open</div></div>
+      <div class="frow"><div class="frow-k">Indicators</div><div class="frow-v">Which ones, on which timeframes, and what each is actually checking for</div></div>
+      <div class="frow"><div class="frow-k">Entry logic</div><div class="frow-v">What confirms a real entry vs. a false read — the boundary/pullback/filter rules</div></div>
+      <div class="frow"><div class="frow-k">Exit and sizing</div><div class="frow-v">Stop placement, partials, the daily trade/loss budget</div></div>
+    </div>
+  </section>
+
+  <div class="foot">
+    Gold's framework took a few weeks of live trading to settle — SPX and USDJPY don't need to start from a blank page, just from your read on each one. Whenever you're ready to define either, that's a normal conversation, not a rebuild.
+  </div>
+</div>
+<script>
+(function(){
+  try{
+    var raw=localStorage.getItem("xauusd-desk:trades:XAUUSD");
+    var el=document.getElementById("xauStat");
+    if(raw){
+      var p=JSON.parse(raw);
+      var n=Array.isArray(p.trades)?p.trades.length:0;
+      el.textContent = n ? n+" trades on file, shared with the Journal and Session Board." : "";
+    }
+  }catch(e){}
+})();
+</script>
+</body>
+</html>

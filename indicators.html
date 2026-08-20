@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15130F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Indicators — The Desk</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+:root{
+  --bg:#15130F; --panel:#1E1B16; --raise:#262119; --rule:#3A3229; --rule2:#2C2620;
+  --text:#EDE6D6; --dim:#948A78; --faint:#6B6355;
+  --brass:#CF9B3F; --jade:#7FA981; --clay:#C06B54; --steel:#6E8B9B;
+  --disp:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;
+  padding-bottom:40px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:900px;margin:0 auto;padding:0 22px}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+
+.desknav{background:var(--panel);border-bottom:1px solid var(--rule2)}
+.desknav-in{max-width:1120px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.desknav-in::-webkit-scrollbar{display:none}
+.desknav-mark{font-family:var(--disp);font-weight:800;font-size:12.5px;letter-spacing:.02em;display:flex;align-items:center;gap:7px;
+  margin-right:10px;color:var(--text);text-decoration:none;flex:none}
+.desknav-mark .ingot{width:16px;height:10px}
+.desknav-item{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  text-decoration:none;padding:7px 12px;border-radius:100px;white-space:nowrap;transition:color .15s,background .15s;flex:none}
+.desknav-item:hover{color:var(--text)}
+.desknav-item[data-here="1"]{color:var(--bg);background:var(--brass);font-weight:600}
+.ingot{width:22px;height:13px;background:linear-gradient(150deg,#E8BC66,#B97F27);
+  clip-path:polygon(14% 0,86% 0,100% 100%,0 100%);border-radius:1px;flex:none}
+
+.top{padding:26px 0 0}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+h2{font-family:var(--disp);font-weight:700;font-size:clamp(23px,4vw,29px);letter-spacing:-.02em;margin:8px 0 0}
+.lede{font-size:13.5px;color:var(--dim);max-width:68ch;line-height:1.68;margin-top:10px}
+
+.list{margin-top:26px;border-top:1px solid var(--rule2)}
+.item{padding:22px 0;border-bottom:1px solid var(--rule2);display:flex;gap:18px}
+.item-num{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none;width:20px;padding-top:3px}
+.item-body{flex:1;min-width:0}
+.item-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.item-name{font-family:var(--disp);font-weight:700;font-size:16.5px}
+.tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--jade);
+  border:1px solid rgba(127,169,129,.4);padding:3px 9px;border-radius:100px;background:rgba(127,169,129,.07);white-space:nowrap}
+.item-p{font-size:13.5px;color:var(--dim);line-height:1.62;margin-top:7px}
+.item-use{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:9px;line-height:1.6}
+.item-use b{color:var(--brass);font-weight:500}
+
+.note{font-family:var(--mono);font-size:11.5px;padding:12px 14px;border-radius:4px;margin-top:24px;
+  border:1px solid rgba(207,155,63,.4);color:var(--brass);background:rgba(207,155,63,.06);line-height:1.6}
+.foot{margin-top:40px;padding:20px 0 10px;border-top:1px solid var(--rule2);
+  font-size:12px;color:var(--faint);line-height:1.75;max-width:70ch}
+</style>
+</head>
+<body>
+<div class="desknav"><div class="desknav-in">
+  <a href="index.html" class="desknav-mark"><span class="ingot"></span>THE DESK</a>
+  <a href="lab.html" class="desknav-item" data-here="0">Lab</a>
+  <a href="indicators.html" class="desknav-item" data-here="1">Indicators</a>
+  <a href="journal.html" class="desknav-item" data-here="0">Journal</a>
+  <a href="session-board.html" class="desknav-item" data-here="0">Session Board</a>
+</div></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eye">XAUUSD · already built</div>
+    <h2>Indicators</h2>
+    <p class="lede">This is documentation, not a live tool — these run on your TradingView chart, not in a browser here. Each entry is what it's for in the actual framework, not a generic description.</p>
+  </header>
+
+  <div class="list">
+
+    <div class="item">
+      <div class="item-num">01</div>
+      <div class="item-body">
+        <div class="item-h"><span class="item-name">Asian Range Box</span><span class="tag">Live on chart</span></div>
+        <p class="item-p">Draws the 01:00–10:00 Beirut high and low as a box on the chart.</p>
+        <p class="item-use">Used for: the pre-session read (range vs. Daily ATR → Compression / Normal / Stretched / Extended), and as the boundary that both the London-experiment trigger and the execution-window entries need an actual break or reclaim of — <b>not</b> a plain EMA/VWAP cross.</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-num">02</div>
+      <div class="item-body">
+        <div class="item-h"><span class="item-name">EMA 21 / 45 / 100</span><span class="tag">Live on chart</span></div>
+        <p class="item-p">Three exponential moving averages on the working timeframe.</p>
+        <p class="item-use">Used for: the 1H-close filter before entering (candle closes above/below EMA21 confirms direction) and as one of the pullback references during the execution window.</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-num">03</div>
+      <div class="item-body">
+        <div class="item-h"><span class="item-name">VWAP — Session Anchored</span><span class="tag">Live on chart</span></div>
+        <p class="item-p">VWAP re-anchored at 15:00 Beirut, when the execution window opens.</p>
+        <p class="item-use">Used for: the reversal-entry distance filter — price sitting roughly 35–50% of Daily ATR away from the anchor. Continuation entries don't use this check.</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-num">04</div>
+      <div class="item-body">
+        <div class="item-h"><span class="item-name">RSI (14)</span><span class="tag">Live on chart</span></div>
+        <p class="item-p">Standard 14-period RSI.</p>
+        <p class="item-use">Used for: the Bullet 2 exhaustion exit at 71 (long) / 29 (short) — an exit signal on the runner, not an entry filter.</p>
+      </div>
+    </div>
+
+    <div class="item">
+      <div class="item-num">05</div>
+      <div class="item-body">
+        <div class="item-h"><span class="item-name">Bollinger Bands (20, 2)</span><span class="tag">Live on chart</span></div>
+        <p class="item-p">20-period, 2 standard deviations, read on the 5-minute chart.</p>
+        <p class="item-use">Used for: the last check before entering during the execution window — part of the pre-entry checklist, alongside the pullback and boundary confirmations.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    These already exist and are running — this page is a reference for what each one is doing and why, not a build. If any of them need adjusting (alerts, visual tweaks, an additional plot), say which one and that's a normal edit, not a rebuild.
+  </div>
+
+  <div class="foot">
+    Nothing on this page reads your chart or any live price — it's a written reference, kept next to the Journal and Session Board so the reasoning behind each indicator lives in the same place as the rules that use it.
+  </div>
+</div>
+</body>
+</html>
