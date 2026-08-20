@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15130F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>XAU/USD — Session Board — The Desk</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+
+:root{
+  --bg:#15130F; --panel:#1E1B16; --raise:#262119; --rule:#3A3229; --rule2:#2C2620;
+  --text:#EDE6D6; --dim:#948A78; --faint:#6B6355;
+  --brass:#CF9B3F; --jade:#7FA981; --clay:#C06B54; --steel:#6E8B9B;
+  --disp:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;
+  padding-bottom:60px;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1000px;margin:0 auto;padding:0 22px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.desknav{background:var(--panel);border-bottom:1px solid var(--rule2)}
+.desknav-in{max-width:1120px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.desknav-in::-webkit-scrollbar{display:none}
+.desknav-mark{font-family:var(--disp);font-weight:800;font-size:12.5px;letter-spacing:.02em;display:flex;align-items:center;gap:7px;
+  margin-right:10px;color:var(--text);text-decoration:none;flex:none}
+.desknav-mark .ingot{width:16px;height:10px}
+.desknav-item{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  text-decoration:none;padding:7px 12px;border-radius:100px;white-space:nowrap;transition:color .15s,background .15s;flex:none}
+.desknav-item:hover{color:var(--text)}
+.desknav-item[data-here="1"]{color:var(--bg);background:var(--brass);font-weight:600}
+
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+.pos{color:var(--jade)} .neg{color:var(--clay)} .dimc{color:var(--dim)}
+
+.top{padding:26px 0 0}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--disp);font-weight:800;font-size:17px;display:flex;align-items:center;gap:9px}
+.ingot{width:22px;height:13px;background:linear-gradient(150deg,#E8BC66,#B97F27);
+  clip-path:polygon(14% 0,86% 0,100% 100%,0 100%);border-radius:1px;flex:none}
+.tagword{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--brass);
+  border:1px solid rgba(207,155,63,.4);border-radius:100px;padding:3px 9px;
+  background:rgba(207,155,63,.08);margin-left:2px}
+.clock{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.05em}
+
+/* hero */
+.hero{position:relative;margin-top:24px;border:1px solid var(--rule2);border-radius:8px;
+  background:linear-gradient(180deg,var(--panel),#191610);overflow:hidden;padding:30px 26px 26px;
+  background-image:radial-gradient(900px 400px at 18% -130px, rgba(207,155,63,.14), transparent 70%)}
+.hero-eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+.hero-time{font-family:var(--mono);font-weight:500;font-size:clamp(42px,9vw,66px);letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;margin:10px 0 8px;color:var(--text)}
+.hero-phase{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;font-size:18px;flex-wrap:wrap}
+.dot{width:9px;height:9px;border-radius:50%;flex:none;background:var(--steel);color:var(--steel);
+  animation:pulse 2.2s ease-in-out infinite}
+.dot.steel{background:var(--steel);color:var(--steel)}
+.dot.brass{background:var(--brass);color:var(--brass)}
+.dot.jade{background:var(--jade);color:var(--jade)}
+.dot.off{background:var(--faint);color:var(--faint);animation:none}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 currentColor;opacity:1}50%{box-shadow:0 0 0 6px transparent;opacity:.5}}
+@media (prefers-reduced-motion: reduce){ .dot{animation:none} }
+.hero-note{font-size:13.5px;color:var(--dim);margin-top:11px;max-width:60ch;line-height:1.65}
+.countdown{font-family:var(--mono);font-size:12px;color:var(--brass);margin-top:14px;
+  border:1px solid rgba(207,155,63,.35);display:inline-block;padding:6px 12px;border-radius:100px;
+  background:rgba(207,155,63,.06)}
+.countdown b{font-variant-numeric:tabular-nums}
+
+/* sections */
+.sect{padding:40px 0 0}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+h2{font-family:var(--disp);font-weight:700;font-size:23px;letter-spacing:-.02em;margin:8px 0 0}
+h3{font-family:var(--disp);font-weight:700;font-size:15.5px;margin:0}
+.lede{font-size:13.5px;color:var(--dim);max-width:66ch;line-height:1.65;margin-top:9px}
+.card{background:var(--panel);border:1px solid var(--rule2);border-radius:8px;padding:20px;margin-top:14px}
+
+/* today's read / london / vwap panels */
+.readgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:4px}
+.readgrid.two{grid-template-columns:repeat(2,1fr)}
+.f{display:flex;flex-direction:column;gap:7px}
+.f label{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.f input,.f select{background:var(--raise);border:1px solid var(--rule2);color:var(--text);
+  padding:11px 12px;border-radius:4px;font-family:var(--mono);font-size:14px;width:100%}
+.f input:focus,.f select:focus{outline:none;border-color:var(--brass)}
+.f select{appearance:none;-webkit-appearance:none;padding-right:28px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);
+  background-position:calc(100% - 15px) 19px,calc(100% - 10px) 19px;background-size:5px 5px;background-repeat:no-repeat}
+.readout{display:flex;gap:22px;flex-wrap:wrap;margin-top:18px;padding-top:16px;border-top:1px solid var(--rule2)}
+.ro-k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.ro-v{font-family:var(--mono);font-size:19px;margin-top:3px;font-variant-numeric:tabular-nums}
+.readtag{font-family:var(--mono);font-size:11px;padding:4px 11px;border-radius:100px;border:1px solid var(--rule);
+  color:var(--dim);display:inline-block;margin-top:3px}
+.readtag.set{color:var(--brass);border-color:rgba(207,155,63,.45);background:rgba(207,155,63,.07)}
+.readtag.jade{color:var(--jade);border-color:rgba(127,169,129,.45);background:rgba(127,169,129,.07)}
+.hint{font-size:11.5px;color:var(--faint);margin-top:12px;line-height:1.55}
+
+/* pill select for day character */
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-top:4px}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.05em;padding:7px 13px;border:1px solid var(--rule2);
+  border-radius:100px;color:var(--dim)}
+.pill[data-on="1"]{color:var(--bg);background:var(--brass);border-color:var(--brass)}
+.pill:hover{color:var(--text)} .pill[data-on="1"]:hover{color:var(--bg)}
+
+/* budget */
+.budgetrow{display:flex;gap:28px;flex-wrap:wrap}
+.bud{flex:1;min-width:180px}
+.bud-k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.bud-vrow{display:flex;align-items:center;gap:14px;margin-top:8px}
+.stepbtn{width:34px;height:34px;border-radius:100px;border:1px solid var(--rule);color:var(--dim);
+  font-size:18px;display:flex;align-items:center;justify-content:center;flex:none;transition:color .15s,border-color .15s}
+.stepbtn:hover{color:var(--text);border-color:var(--dim)}
+.bud-v{font-family:var(--mono);font-size:26px;font-variant-numeric:tabular-nums;min-width:64px;text-align:center}
+.bud-cap{font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:8px}
+.budgetlock{font-family:var(--mono);font-size:12px;color:var(--clay);margin-top:18px;padding:11px 14px;
+  border:1px solid rgba(192,107,84,.4);border-radius:4px;background:rgba(192,107,84,.07)}
+
+/* checklist */
+.phasegroup{margin-top:20px}
+.phasegroup:first-child{margin-top:0}
+.phasegroup-h{display:flex;align-items:center;gap:9px;font-family:var(--disp);font-weight:700;font-size:14.5px;
+  padding-bottom:9px;border-bottom:1px solid var(--rule2);margin-bottom:11px}
+.phasegroup-h .dot{animation:none}
+.check{display:flex;align-items:flex-start;gap:12px;padding:9px 0;cursor:pointer}
+.check input{margin-top:3px;width:16px;height:16px;flex:none;accent-color:var(--brass)}
+.check span{font-size:13.5px;color:var(--text);line-height:1.5}
+.check.done span{color:var(--faint);text-decoration:line-through}
+.progress{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:6px}
+
+/* history import */
+.drop{border:1.5px dashed var(--rule);border-radius:8px;padding:28px 22px;text-align:center;
+  background:var(--raise);transition:border-color .2s,background .2s}
+.drop.over{border-color:var(--brass);background:rgba(207,155,63,.07)}
+.drop p{color:var(--dim);font-size:13px;max-width:52ch;margin:0 auto 16px;line-height:1.6}
+
+/* suggestion cards */
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}
+.scard{background:var(--raise);border:1px solid var(--rule2);border-radius:6px;padding:16px}
+.scard-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.scard-t{font-family:var(--disp);font-weight:700;font-size:13.5px}
+.badge{font-family:var(--mono);font-size:9.5px;padding:2px 8px;border-radius:100px;border:1px solid var(--rule);color:var(--dim);white-space:nowrap}
+.badge.thin{color:var(--brass);border-color:rgba(207,155,63,.4)}
+.badge.none{color:var(--faint)}
+.sstats{display:flex;gap:16px;margin-top:11px;flex-wrap:wrap}
+.sstat-k{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.sstat-v{font-family:var(--mono);font-size:17px;margin-top:2px;font-variant-numeric:tabular-nums}
+.snote{font-size:11.5px;color:var(--faint);margin-top:10px;line-height:1.5}
+
+.acts{display:flex;gap:11px;align-items:center;margin-top:18px;flex-wrap:wrap}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  background:var(--brass);color:#15130F;padding:12px 22px;border-radius:4px;font-weight:600;transition:filter .15s}
+.btn:hover{filter:brightness(1.09)}
+.btn.g{background:none;color:var(--dim);border:1px solid var(--rule);font-weight:400}
+.btn.g:hover{color:var(--text);border-color:var(--dim)}
+
+.note{font-family:var(--mono);font-size:11.5px;padding:11px 14px;border-radius:4px;margin-top:14px;
+  border:1px solid rgba(207,155,63,.4);color:var(--brass);background:rgba(207,155,63,.06);
+  display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.note.bad{border-color:rgba(192,107,84,.45);color:var(--clay);background:rgba(192,107,84,.06)}
+.link{color:var(--brass);font-family:var(--mono);font-size:11px;text-decoration:underline;padding:0}
+
+.foot{margin-top:48px;padding:20px 0 10px;border-top:1px solid var(--rule2);
+  font-size:12px;color:var(--faint);line-height:1.75;max-width:70ch}
+
+@media (max-width:640px){
+  .readgrid{grid-template-columns:1fr 1fr}
+  .readgrid .f:last-child{grid-column:span 2}
+  .sgrid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="desknav"><div class="desknav-in">
+  <a href="index.html" class="desknav-mark"><span class="ingot"></span>THE DESK</a>
+  <a href="lab.html" class="desknav-item" data-here="0">Lab</a>
+  <a href="indicators.html" class="desknav-item" data-here="0">Indicators</a>
+  <a href="journal.html" class="desknav-item" data-here="0">Journal</a>
+  <a href="session-board.html" class="desknav-item" data-here="1">Session Board</a>
+</div></div>
+
+<div class="wrap">
+
+  <div class="top">
+    <div class="toprow">
+      <div class="mark"><span class="ingot"></span>XAU/USD <span class="tagword">SESSION BOARD</span></div>
+      <div class="clock" id="topclock">Beirut UTC+3</div>
+    </div>
+  </div>
+
+  <section class="hero">
+    <div class="hero-eye">On the desk right now</div>
+    <div class="hero-time" id="heroTime">--:--:--</div>
+    <div class="hero-phase"><span class="dot" id="phaseDot"></span><span id="phaseName">Reading the clock…</span></div>
+    <div class="hero-note" id="phaseNote">&nbsp;</div>
+    <div class="countdown" id="countdown"></div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">Live · TradingView</div>
+    <h2>Chart</h2>
+    <p class="lede">A real TradingView chart with live quotes — free, no account needed. It's view-only: it doesn't feed the fields below. Chart data and the numbers you enter are two separate things, on purpose — see the note at the bottom of this section.</p>
+    <div class="card" style="padding:0;overflow:hidden">
+      <div class="tradingview-widget-container" style="height:480px">
+        <div id="tv_chart" style="height:100%"></div>
+      </div>
+    </div>
+    <div class="hint" style="margin-top:10px">Read-only chart. Nothing on this page auto-fills from it — the Asian range, VWAP, and price fields below still need to be entered by hand, because TradingView's free widget runs in its own sandboxed frame and doesn't hand its data out to the page around it. A live feed for those fields would be a separate integration, with its own subscription.</div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">Pre-session · 01:00–10:00</div>
+    <h2>Asian range</h2>
+    <p class="lede">Enter the Asian high and low once the range is set, plus today's Daily ATR. This is a first read off the Asian range alone — the day can still reclassify once it extends, same as it has before.</p>
+    <div class="card">
+      <div class="readgrid">
+        <div class="f"><label>Asian high</label><input id="aHigh" inputmode="decimal" placeholder="4079.18"></div>
+        <div class="f"><label>Asian low</label><input id="aLow" inputmode="decimal" placeholder="4047.34"></div>
+        <div class="f"><label>Daily ATR</label><input id="aAtr" inputmode="decimal" placeholder="83.96"></div>
+      </div>
+      <div class="readout" id="readout"></div>
+      <div class="hint" id="readHint"></div>
+      <div class="acts" style="margin-top:14px">
+        <button class="btn g" id="liveFetchBtn" data-act="fetchLive">Fetch live (Asian range + ATR)</button>
+      </div>
+      <div id="liveOut"></div>
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">Read-only · 10:00–15:00</div>
+    <h2>London range</h2>
+    <p class="lede">Reference only — the tracked London-experiment trade still needs a break or reclaim of the <b>Asian</b> high/low, not London's own range. This just shows how the range is behaving into the anchor.</p>
+    <div class="card">
+      <div class="readgrid two">
+        <div class="f"><label>London high</label><input id="lHigh" inputmode="decimal" placeholder="4082.40"></div>
+        <div class="f"><label>London low</label><input id="lLow" inputmode="decimal" placeholder="4061.10"></div>
+      </div>
+      <div class="readout" id="londonOut"></div>
+      <div class="hint" id="londonHint"></div>
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">From 15:00</div>
+    <h2>VWAP &amp; anchored VWAP</h2>
+    <p class="lede">Enter the VWAP value once it's anchored at 15:00, and price whenever you're checking the reversal-entry filter — distance from VWAP as a % of ATR, roughly the 35–50% zone.</p>
+    <div class="card">
+      <div class="readgrid two">
+        <div class="f"><label>Anchored VWAP</label><input id="vwapV" inputmode="decimal" placeholder="4071.20"></div>
+        <div class="f"><label>Price now</label><input id="priceV" inputmode="decimal" placeholder="4066.85"></div>
+      </div>
+      <div class="readout" id="vwapOut"></div>
+      <div class="hint" id="vwapHint"></div>
+      <div class="acts" style="margin-top:14px">
+        <button class="btn g" id="vwapFetchBtn" data-act="fetchVwapPrice">Use live price</button>
+      </div>
+      <div id="vwapMsg"></div>
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">Once you can tell</div>
+    <h2>Day character</h2>
+    <p class="lede">Usually only clear once London or NY is moving. Setting it here feeds the suggestion cards below.</p>
+    <div class="card">
+      <div class="pills" id="charPills"></div>
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">Discipline</div>
+    <h2>Today's budget</h2>
+    <p class="lede">2–3 trades, 2 losses maximum. Step these as the day goes — the board flags it once either cap is hit.</p>
+    <div class="card">
+      <div class="budgetrow">
+        <div class="bud">
+          <div class="bud-k">Trades taken</div>
+          <div class="bud-vrow">
+            <button class="stepbtn" data-act="trades" data-d="-1">–</button>
+            <div class="bud-v" id="tradesV">0</div>
+            <button class="stepbtn" data-act="trades" data-d="1">+</button>
+          </div>
+          <div class="bud-cap">Target 2–3 / day</div>
+        </div>
+        <div class="bud">
+          <div class="bud-k">Losses</div>
+          <div class="bud-vrow">
+            <button class="stepbtn" data-act="losses" data-d="-1">–</button>
+            <div class="bud-v" id="lossesV">0</div>
+            <button class="stepbtn" data-act="losses" data-d="1">+</button>
+          </div>
+          <div class="bud-cap">Cap at 2 / day</div>
+        </div>
+      </div>
+      <div id="budgetMsg"></div>
+    </div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">Checklist</div>
+    <h2>Pre-entry, by phase</h2>
+    <p class="lede">Ticks reset with the Beirut date, stored in this browser. Nothing here fires an alert — it's a read you check yourself, not an automated gate.</p>
+    <div class="card" id="checklist"></div>
+  </section>
+
+  <section class="sect">
+    <div class="eye">From your own log</div>
+    <h2>Suggestions</h2>
+    <p class="lede">Descriptive, not predictive: these are stats pulled from your actual trade history, matched against what's entered above. Small samples stay marked thin — a pattern, not a forecast for today.</p>
+
+    <div class="card">
+      <h3 style="margin-bottom:6px">Trade history</h3>
+      <p class="lede" style="margin-top:6px" id="histStatus">No history loaded yet — drop your journal workbook below to power the cards.</p>
+      <div class="drop" id="drop" style="margin-top:14px">
+        <p>Drop the XAUUSD Trading Journal workbook here, or choose it — read in your browser, nothing uploaded. Same file the dashboard uses.</p>
+        <button class="btn g" data-act="pick">Choose file</button>
+      </div>
+    </div>
+
+    <div class="sgrid" id="suggestions"></div>
+  </section>
+
+  <div class="acts">
+    <button class="btn g" data-act="reset">Clear today's board</button>
+  </div>
+
+  <div class="foot">
+    No live price feed — Beirut time is the only thing this board reads on its own. Ranges, VWAP, the checklist and the trade/loss counters are entered by you and stored in this browser, keyed to today's date, and reset at the date rollover. Trade history for the suggestion cards is shared with the Journal — importing on either page updates both, as long as they're opened from the same host. Open the Journal to log the actual trades.
+  </div>
+
+</div>
+<input type="file" id="filepick" accept=".xlsx,.xlsm,.xls" style="position:fixed;left:-9999px">
+
+<script>
+(function(){
+  "use strict";
+
+  var PHASES = [
+    { from:1,  to:10, id:'asian', name:'Asian range — watching', cls:'steel',
+      note:'Mark today\u2019s high and low once the range is set \u2014 this becomes the reference for everything after.' },
+    { from:10, to:15, id:'london', name:'London — reading', cls:'brass',
+      note:'Read-only unless taking the tracked London experiment: needs a real break or reclaim of the Asian high/low, only on a Normal or Compression day, counted against today\u2019s budget.' },
+    { from:15, to:24, id:'exec', name:'Execution window', cls:'jade',
+      note:'VWAP anchor is live and the rules apply in full \u2014 wait for the pullback, confirm the boundary, check the 5m bands before entering.' },
+    { from:0,  to:1,  id:'eod', name:'Off desk', cls:'off',
+      note:'Outside the framework\u2019s hours. Nothing to read, nothing to trade.' }
+  ];
+
+  var CHECK_ITEMS = [
+    { id:'markAsian',   phase:'asian',  label:'Asian high and low marked' },
+    { id:'atrNoted',    phase:'asian',  label:'Daily ATR noted, range read against it' },
+    { id:'h1Filter',    phase:'london', label:'1H candle close checked vs EMA21 / VWAP' },
+    { id:'dayChar',     phase:'london', label:'Day character forming assessed \u2014 trend, choppy, or reversal' },
+    { id:'londonRule',  phase:'london', label:'If taking the London trade: real break/reclaim confirmed, day is Normal or Compression' },
+    { id:'pullback',    phase:'exec',   label:'Waited for a pullback \u2014 not chasing an un-retraced leg' },
+    { id:'bb5m',        phase:'exec',   label:'5-min Bollinger Bands checked before entering' },
+    { id:'boundary',    phase:'exec',   label:'Actual boundary break/reclaim confirmed \u2014 not just an EMA21/VWAP cross' },
+    { id:'vwapDist',    phase:'exec',   label:'Reversal entries only: VWAP distance in the 35\u201350% of ATR zone' },
+    { id:'stopSet',     phase:'exec',   label:'Stop set with the 15m ATR buffer; any tightening capped at 2x' },
+    { id:'bullets',     phase:'exec',   label:'Bullet 1 ~1R partial planned; Bullet 2 target set with the RSI 71/29 exit in mind' },
+    { id:'flat',        phase:'eod',    label:'Flat for the day \u2014 no unmanaged holds' }
+  ];
+  var PHASE_LABEL = { asian:'Asian range · 01:00\u201310:00', london:'London · 10:00\u201315:00',
+                      exec:'Execution window · 15:00\u201300:00', eod:'End of day' };
+  var PHASE_DOT   = { asian:'steel', london:'brass', exec:'jade', eod:'off' };
+  var DAY_CHARS   = ['Trending Bullish Day','Trending Bearish Day','Choppy Day','Reversal Day'];
+
+  /* Same column map as the dashboard, so the same workbook drives both. */
+  var SHEET_COLS = [
+    ["date","Date"], ["tradeNo","Trade #\n(of day)"], ["session","Session"], ["dayType","Day Type"],
+    ["dayChar","Day\nCharacter"], ["asianHigh","Asian High"], ["asianLow","Asian Low"], ["atr","Daily ATR"],
+    ["asianRange","Asian Range\n(pts)"], ["asianPctATR","Asian Range\n% of ATR"], ["dayPctATR","Day Range\n% ATR\n(at entry)"],
+    ["setup","Setup Type"], ["direction","Direction"], ["rsi","RSI\nat Entry"],
+    ["entry1","Entry\nBullet 1"], ["entry2","Entry\nBullet 2"], ["sl","Stop Loss"], ["risk1R","Risk 1R\n(Bullet 1, pts)"],
+    ["tp1","TP1\n(Bullet 1)"], ["tp2","TP2\n(Bullet 2)"], ["exit1","Exit\nBullet 1"], ["exit2","Exit\nBullet 2"],
+    ["res1","Result\nBullet 1 (pts)"], ["res2","Result\nBullet 2 (pts)"], ["totalPts","Total Result\n(pts)"],
+    ["resR","Result\n(R)"], ["ruleBroken","Rule\nBroken?"], ["confluence","Confluence / Setup Notes"],
+    ["notes","Notes / Lessons"], ["h1State","1H State\nat Entry"]
+  ];
+
+  function beirutParts(){
+    var fmt=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Beirut',year:'numeric',month:'2-digit',day:'2-digit',
+      hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+    var parts=fmt.formatToParts(new Date()), o={};
+    parts.forEach(function(p){ o[p.type]=p.value; });
+    return { h:+o.hour, m:+o.minute, s:+o.second, date:o.year+'-'+o.month+'-'+o.day };
+  }
+  function pad(n){ return (n<10?'0':'')+n; }
+  function num(v){ var n=parseFloat(v); return isFinite(n)?n:null; }
+  function n(v){ var x=typeof v==="number"?v:parseFloat(v); return isFinite(x)?x:0; }
+  function has(v){ return v!==null && v!==undefined && v!==""; }
+  function fmt2(v,d){ d=d===undefined?2:d; return (v>0&&d===0?"+":"")+v.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d}); }
+  function fmtSigned(v,d){ d=d===undefined?1:d; return (v>0?"+":"")+v.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d}); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function cls(v){ return v>0?"pos":v<0?"neg":"dimc"; }
+  function norm(h){ return String(h==null?"":h).replace(/\s+/g," ").trim().toLowerCase(); }
+  function toISO(v){
+    if(!has(v)) return "";
+    if(typeof v==="number"){ var d=new Date(Math.round((v-25569)*86400000)); return d.toISOString().slice(0,10); }
+    var s=String(v).trim(); var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[0];
+    var d2=new Date(s); if(!isNaN(d2.getTime())) return d2.toISOString().slice(0,10);
+    return s;
+  }
+
+  function phaseFor(h){
+    for(var i=0;i<PHASES.length;i++){ if(h>=PHASES[i].from && h<PHASES[i].to) return PHASES[i]; }
+    return PHASES[PHASES.length-1];
+  }
+  function nextBoundary(h,m){
+    var order=[1,10,15,24], mins=h*60+m;
+    for(var i=0;i<order.length;i++){ var b=order[i]*60; if(mins<b) return b-mins; }
+    return (24*60-mins)+60;
+  }
+
+  /* ---------------- daily state (resets at the Beirut date rollover) ---------------- */
+  var today = beirutParts().date;
+  var KEY = "session-board:"+today;
+  var day = { asianHigh:"",asianLow:"",atr:"", londonHigh:"",londonLow:"", vwap:"",price:"",
+              dayChar:"", checks:{}, trades:0, losses:0 };
+  function loadDay(){
+    try{ var raw=localStorage.getItem(KEY); if(raw) day=Object.assign(day, JSON.parse(raw)); }catch(e){}
+  }
+  function saveDay(){ try{ localStorage.setItem(KEY, JSON.stringify(day)); }catch(e){} }
+
+  /* ---------------- history state ----------------
+     Trade history lives under the same shared, per-symbol key the
+     Journal uses — importing here updates the Journal too, and vice
+     versa. histMeta (which file, when) is this page's own memory only,
+     since the shared record itself doesn't carry a filename. */
+  var SYMBOL = "XAUUSD";
+  var HKEY = "xauusd-desk:trades:" + SYMBOL;
+  var LEGACY_HKEYS = ["session-board-history", "xauusd-journal-v3"];
+  var MKEY = "session-board-import-meta";
+  var hist = { trades: [], days: [] };
+  var histMeta = { file:"", when:"" };
+  function loadHist(){
+    try{
+      var raw=localStorage.getItem(HKEY);
+      if(raw){
+        var p=JSON.parse(raw);
+        hist.trades=Array.isArray(p.trades)?p.trades:[];
+        hist.days=Array.isArray(p.days)?p.days:[];
+      } else {
+        for(var i=0;i<LEGACY_HKEYS.length;i++){
+          var old=localStorage.getItem(LEGACY_HKEYS[i]);
+          if(!old) continue;
+          var op=JSON.parse(old);
+          if(Array.isArray(op.trades) && op.trades.length){
+            hist.trades=op.trades; hist.days=Array.isArray(op.days)?op.days:[];
+            saveHist();
+            break;
+          }
+        }
+      }
+    }catch(e){}
+    try{ var m=localStorage.getItem(MKEY); if(m) histMeta=Object.assign(histMeta, JSON.parse(m)); }catch(e){}
+  }
+  function saveHist(){ try{ localStorage.setItem(HKEY, JSON.stringify({trades:hist.trades, days:hist.days})); }catch(e){} }
+  function saveMeta(){ try{ localStorage.setItem(MKEY, JSON.stringify(histMeta)); }catch(e){} }
+
+  var currentDayTypeLabel = null; // set by renderAsian(), used by suggestions
+
+  /* ---------------- Asian / London / VWAP panels ---------------- */
+  function renderAsian(){
+    var h=num(day.asianHigh), l=num(day.asianLow), a=num(day.atr);
+    var out="", hint=""; currentDayTypeLabel=null;
+    if(h!==null && l!==null){
+      var range=h-l;
+      out+='<div><div class="ro-k">Range</div><div class="ro-v">'+fmt2(range,1)+' pts</div></div>';
+      if(a){
+        var pct=range/a*100;
+        var label = pct<50?"Compression": pct<75?"Normal": pct<120?"Stretched":"Extended";
+        currentDayTypeLabel=label;
+        out+='<div><div class="ro-k">% of Daily ATR</div><div class="ro-v">'+pct.toFixed(1)+'%</div></div>';
+        out+='<div><div class="ro-k">First read</div><div class="readtag set">'+label+'</div></div>';
+        hint="Rough boundaries only (&lt;50 / 50\u201375 / 75\u2013120 / &gt;120% of ATR) \u2014 your own judgment leads, and the day can reclassify intraday.";
+      } else hint="Add Daily ATR to get a Compression/Normal/Stretched/Extended read.";
+    } else hint="Enter the Asian high and low once the 01:00\u201310:00 range is in.";
+    document.getElementById("readout").innerHTML=out;
+    document.getElementById("readHint").textContent=hint;
+    renderSuggestions();
+  }
+  function renderLondon(){
+    var h=num(day.londonHigh), l=num(day.londonLow), a=num(day.atr);
+    var out="", hint="";
+    if(h!==null && l!==null){
+      var range=h-l;
+      out+='<div><div class="ro-k">Range</div><div class="ro-v">'+fmt2(range,1)+' pts</div></div>';
+      if(a){
+        out+='<div><div class="ro-k">% of Daily ATR</div><div class="ro-v">'+(range/a*100).toFixed(1)+'%</div></div>';
+      }
+      if(has(day.asianHigh)&&has(day.asianLow)){
+        var ah=num(day.asianHigh), al=num(day.asianLow);
+        var brokeHigh = h>ah, brokeLow = l<al;
+        var tag = brokeHigh&&brokeLow ? "Swept both sides of the Asian range" :
+                  brokeHigh ? "Broke the Asian high" : brokeLow ? "Broke the Asian low" : "Contained inside the Asian range";
+        out+='<div><div class="ro-k">Vs. Asian range</div><div class="readtag '+((brokeHigh||brokeLow)?"jade":"")+'" style="margin-top:8px">'+tag+'</div></div>';
+      }
+      hint="Reference only \u2014 the London-experiment trigger is still a break/reclaim of the Asian high or low.";
+    } else hint="Enter London's high and low once you have a read on it.";
+    document.getElementById("londonOut").innerHTML=out;
+    document.getElementById("londonHint").textContent=hint;
+  }
+  function renderVwap(){
+    var v=num(day.vwap), p=num(day.price), a=num(day.atr);
+    var out="", hint="";
+    if(v!==null && p!==null){
+      var dist=p-v, adist=Math.abs(dist);
+      out+='<div><div class="ro-k">Distance</div><div class="ro-v '+cls(dist)+'">'+fmtSigned(dist,2)+' pts</div></div>';
+      if(a){
+        var pct=adist/a*100;
+        out+='<div><div class="ro-k">% of Daily ATR</div><div class="ro-v">'+pct.toFixed(1)+'%</div></div>';
+        var inZone = pct>=35 && pct<=50;
+        out+='<div><div class="ro-k">Reversal filter</div><div class="readtag '+(inZone?"jade":"")+'">'+
+          (inZone?"In the 35\u201350% zone":(pct<35?"Below the zone":"Beyond the zone"))+'</div></div>';
+        hint="The 35\u201350% zone is your reversal-entry filter only \u2014 continuation entries don't use this check.";
+      } else hint="Add Daily ATR above to see this as a % and check the reversal-entry zone.";
+    } else hint="Enter the anchored VWAP and a current price to check distance.";
+    document.getElementById("vwapOut").innerHTML=out;
+    document.getElementById("vwapHint").textContent=hint;
+  }
+  function renderCharPills(){
+    var h='<button class="pill" data-charpill="" data-on="'+(day.dayChar?"0":"1")+'">Not yet</button>';
+    DAY_CHARS.forEach(function(c){
+      h+='<button class="pill" data-charpill="'+esc(c)+'" data-on="'+(day.dayChar===c?1:0)+'">'+esc(c)+'</button>';
+    });
+    document.getElementById("charPills").innerHTML=h;
+  }
+
+  function renderBudget(){
+    document.getElementById("tradesV").textContent=day.trades;
+    document.getElementById("lossesV").textContent=day.losses;
+    var msg="";
+    if(day.losses>=2) msg='<div class="budgetlock">Loss cap hit \u2014 today\u2019s trading is done.</div>';
+    else if(day.trades>=3) msg='<div class="budgetlock">Trade count hit \u2014 no more trades today unless there\u2019s a specific reason.</div>';
+    document.getElementById("budgetMsg").innerHTML=msg;
+    renderSuggestions();
+  }
+
+  function renderChecklist(){
+    var groups={ asian:[], london:[], exec:[], eod:[] };
+    CHECK_ITEMS.forEach(function(it){ groups[it.phase].push(it); });
+    var h="";
+    ["asian","london","exec","eod"].forEach(function(ph){
+      var items=groups[ph];
+      var doneCt=items.filter(function(it){ return day.checks[it.id]; }).length;
+      h+='<div class="phasegroup"><div class="phasegroup-h"><span class="dot '+PHASE_DOT[ph]+'"></span>'+
+        esc(PHASE_LABEL[ph])+'</div>';
+      items.forEach(function(it){
+        var on=!!day.checks[it.id];
+        h+='<label class="check'+(on?" done":"")+'"><input type="checkbox" data-check="'+it.id+'" '+(on?"checked":"")+'>'+
+          '<span>'+esc(it.label)+'</span></label>';
+      });
+      h+='<div class="progress">'+doneCt+' / '+items.length+' checked</div></div>';
+    });
+    document.getElementById("checklist").innerHTML=h;
+  }
+
+  /* ---------------- suggestions ---------------- */
+  function aggFor(list){
+    var c=list.length, p=list.reduce(function(s,t){return s+n(t.totalPts);},0);
+    var r=list.reduce(function(s,t){return s+n(t.resR);},0);
+    var w=list.filter(function(t){return n(t.totalPts)>0;}).length;
+    return { n:c, pts:p, avg:c?p/c:0, avgR:c?r/c:0, wr:c?w/c*100:0 };
+  }
+  function statCard(title, list, note){
+    var a=aggFor(list);
+    var badge = a.n===0 ? '<span class="badge none">No trades</span>'
+      : a.n<5 ? '<span class="badge thin">Thin \u00b7 n='+a.n+'</span>'
+      : '<span class="badge">n='+a.n+'</span>';
+    var h='<div class="scard"><div class="scard-h"><span class="scard-t">'+esc(title)+'</span>'+badge+'</div>';
+    if(a.n){
+      h+='<div class="sstats">'+
+        '<div><div class="sstat-k">Avg pts</div><div class="sstat-v '+cls(a.avg)+'">'+fmtSigned(a.avg)+'</div></div>'+
+        '<div><div class="sstat-k">Avg R</div><div class="sstat-v '+cls(a.avgR)+'">'+fmtSigned(a.avgR,2)+'</div></div>'+
+        '<div><div class="sstat-k">Win rate</div><div class="sstat-v">'+a.wr.toFixed(0)+'%</div></div>'+
+        '</div>';
+    }
+    if(note) h+='<div class="snote">'+note+'</div>';
+    return h+"</div>";
+  }
+  function renderSuggestions(){
+    var box=document.getElementById("suggestions");
+    document.getElementById("histStatus").textContent = hist.trades.length
+      ? hist.trades.length+" trades on file"+(histMeta.file
+          ? " — last loaded here from "+histMeta.file+" ("+histMeta.when+")."
+          : " — shared with the Journal.")
+      : "No history loaded yet — drop your journal workbook below, or import it from the Journal's Data tab. Either one fills in both.";
+    if(!hist.trades.length){ box.innerHTML=""; return; }
+
+    var h="";
+    if(currentDayTypeLabel){
+      var list=hist.trades.filter(function(t){ return t.dayType===currentDayTypeLabel; });
+      h+=statCard("Today's read: "+currentDayTypeLabel, list,
+        "How "+esc(currentDayTypeLabel)+"-classified days have gone before, by trade.");
+    } else {
+      h+=statCard("Today's read", [], "Enter the Asian high/low/ATR above to match against this day type.");
+    }
+
+    if(day.dayChar){
+      var listc=hist.trades.filter(function(t){ return t.dayChar===day.dayChar; });
+      h+=statCard(day.dayChar, listc, "Trades logged on days you later tagged "+esc(day.dayChar)+".");
+    } else {
+      h+=statCard("Day character", [], "Tag it above once London or NY gives you a read.");
+    }
+
+    var nextNo=(day.trades||0)+1;
+    var listn=hist.trades.filter(function(t){ return n(t.tradeNo)===nextNo; });
+    h+=statCard("If this is trade #"+nextNo+" today", listn,
+      "How your historical trade #"+nextNo+" of the day has performed \u2014 the back end of the budget is often the weakest slot.");
+
+    var lon=hist.trades.filter(function(t){ return t.session==="London"; });
+    var ny=hist.trades.filter(function(t){ return t.session==="NY"; });
+    h+=statCard("London session", lon, "Compare against New York alongside it.");
+    h+=statCard("New York session", ny, "");
+
+    box.innerHTML=h;
+  }
+
+  /* ---------------- history import ---------------- */
+  function findSheet(wb, wanted){
+    for(var i=0;i<wb.SheetNames.length;i++) if(norm(wb.SheetNames[i])===norm(wanted)) return wb.Sheets[wb.SheetNames[i]];
+    return null;
+  }
+  function gridOf(ws){ return ws?XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null}):[]; }
+  function headerIndex(grid){
+    for(var i=0;i<Math.min(grid.length,15);i++){
+      var row=grid[i]||[];
+      for(var j=0;j<Math.min(row.length,4);j++) if(norm(row[j])==="date") return i;
+    }
+    return -1;
+  }
+  function mapRow(row,hdr,spec){
+    var out={};
+    spec.forEach(function(pair){ var idx=hdr.indexOf(norm(pair[1])); out[pair[0]]=idx>-1?row[idx]:null; });
+    return out;
+  }
+  function readWorkbook(file){
+    if(typeof XLSX==="undefined"){ flash("The spreadsheet reader didn't load. Check your connection and reload.","bad"); return; }
+    var fr=new FileReader();
+    fr.onerror=function(){ flash("Couldn't read that file.","bad"); };
+    fr.onload=function(ev){
+      try{
+        var wb=XLSX.read(new Uint8Array(ev.target.result),{type:"array"});
+        var tg=gridOf(findSheet(wb,"Trade Log"));
+        if(!tg.length){ for(var i=0;i<wb.SheetNames.length;i++){ var g=gridOf(wb.Sheets[wb.SheetNames[i]]); if(headerIndex(g)>-1){ tg=g; break; } } }
+        var hi=headerIndex(tg);
+        var trades=[];
+        if(hi>-1){
+          var hdr=(tg[hi]||[]).map(norm);
+          for(var r=hi+1;r<tg.length;r++){
+            var row=tg[r]||[];
+            var dCol=hdr.indexOf("date"); if(dCol<0) dCol=0;
+            if(!has(row[dCol])) continue;
+            var rec=mapRow(row,hdr,SHEET_COLS);
+            rec.date=toISO(rec.date);
+            if(!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)) continue;
+            if(!has(rec.totalPts) && (has(rec.res1)||has(rec.res2))) rec.totalPts=n(rec.res1)+n(rec.res2);
+            trades.push(rec);
+          }
+        }
+        if(!trades.length){ flash("No trade rows found — expecting a Trade Log sheet with a Date column.","bad"); return; }
+        hist={ trades:trades, days:hist.days||[] };
+        saveHist();
+        histMeta={ file:file.name, when:new Date().toLocaleDateString() };
+        saveMeta();
+        flash("Loaded "+trades.length+" trades from "+file.name+" — this also updates the Journal.","ok");
+        renderSuggestions();
+      }catch(err){ flash("Import failed: "+(err&&err.message?err.message:err),"bad"); }
+    };
+    fr.readAsArrayBuffer(file);
+  }
+  function flash(msg,kind){
+    var el=document.getElementById("histStatus");
+    el.innerHTML='<span class="'+(kind==="bad"?"neg":"pos")+'">'+esc(msg)+'</span>';
+  }
+  function wireDrop(){
+    var d=document.getElementById("drop"); if(!d) return;
+    ["dragenter","dragover"].forEach(function(ev){ d.addEventListener(ev,function(e){ e.preventDefault(); d.classList.add("over"); }); });
+    ["dragleave","drop"].forEach(function(ev){ d.addEventListener(ev,function(e){ e.preventDefault(); d.classList.remove("over"); }); });
+    d.addEventListener("drop",function(e){ if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]) readWorkbook(e.dataTransfer.files[0]); });
+  }
+  document.getElementById("filepick").addEventListener("change",function(e){
+    if(e.target.files&&e.target.files[0]) readWorkbook(e.target.files[0]);
+    e.target.value="";
+  });
+
+  /* ---------------- clock / phase tick ---------------- */
+  function tick(){
+    var t=beirutParts();
+    if(t.date!==today){
+      today=t.date; KEY="session-board:"+today;
+      day={ asianHigh:"",asianLow:"",atr:"", londonHigh:"",londonLow:"", vwap:"",price:"",
+            dayChar:"", checks:{}, trades:0, losses:0 };
+      loadDay(); renderAll();
+    }
+    document.getElementById("heroTime").textContent=pad(t.h)+':'+pad(t.m)+':'+pad(t.s);
+    var ph=phaseFor(t.h);
+    document.getElementById("phaseName").textContent=ph.name;
+    document.getElementById("phaseNote").textContent=ph.note;
+    document.getElementById("phaseDot").className='dot '+ph.cls;
+    var mins=nextBoundary(t.h,t.m), secLeft=60-t.s;
+    var hh=Math.floor((mins-1)/60), mm=(mins-1)%60;
+    var label = ph.id==="london" ? "until the VWAP anchor" : ph.id==="asian" ? "until London" :
+                ph.id==="exec" ? "until Asian range resets" : "until Asian range opens";
+    document.getElementById("countdown").innerHTML='<b>'+pad(hh)+':'+pad(mm)+':'+pad(secLeft===60?0:secLeft)+'</b> '+label;
+  }
+
+  function renderAll(){
+    renderAsian(); renderLondon(); renderVwap(); renderCharPills(); renderBudget(); renderChecklist(); renderSuggestions();
+  }
+
+  /* ---------------- events ---------------- */
+  var FIELD_MAP={ aHigh:"asianHigh", aLow:"asianLow", aAtr:"atr", lHigh:"londonHigh", lLow:"londonLow",
+                   vwapV:"vwap", priceV:"price" };
+  Object.keys(FIELD_MAP).forEach(function(id){
+    document.getElementById(id).addEventListener("input",function(e){
+      day[FIELD_MAP[id]]=e.target.value; saveDay();
+      if(id==="aHigh"||id==="aLow"||id==="aAtr"){ renderAsian(); renderLondon(); renderVwap(); }
+      else if(id==="lHigh"||id==="lLow"){ renderLondon(); }
+      else { renderVwap(); }
+    });
+  });
+
+  document.addEventListener("click",function(e){
+   try{
+    var pill=e.target.closest("[data-charpill]");
+    if(pill){ day.dayChar=pill.dataset.charpill; saveDay(); renderCharPills(); renderSuggestions(); return; }
+    var step=e.target.closest("[data-act='trades'],[data-act='losses']");
+    if(step){
+      var field=step.dataset.act, d=parseInt(step.dataset.d,10);
+      day[field]=Math.max(0,(day[field]||0)+d); saveDay(); renderBudget(); return;
+    }
+    if(e.target.closest("[data-act='pick']")){ document.getElementById("filepick").click(); return; }
+    if(e.target.closest("[data-act='fetchLive']")){ fetchLive(); return; }
+    if(e.target.closest("[data-act='fetchVwapPrice']")){ fetchVwapPrice(); return; }
+    var applyPrice=e.target.closest("[data-act='applyPrice']");
+    if(applyPrice){
+      day.price=applyPrice.dataset.v; document.getElementById("priceV").value=day.price;
+      saveDay(); renderVwap(); return;
+    }
+    var applyAsian=e.target.closest("[data-act='applyAsian']");
+    if(applyAsian){
+      day.asianHigh=applyAsian.dataset.h; day.asianLow=applyAsian.dataset.l;
+      document.getElementById("aHigh").value=day.asianHigh;
+      document.getElementById("aLow").value=day.asianLow;
+      saveDay(); renderAsian(); renderLondon(); renderVwap(); return;
+    }
+    var applyAtr=e.target.closest("[data-act='applyAtr']");
+    if(applyAtr){
+      day.atr=applyAtr.dataset.v; document.getElementById("aAtr").value=day.atr;
+      saveDay(); renderAsian(); renderLondon(); renderVwap(); return;
+    }
+    if(e.target.closest("[data-act='reset']")){
+      day={ asianHigh:"",asianLow:"",atr:"", londonHigh:"",londonLow:"", vwap:"",price:"",
+            dayChar:"", checks:{}, trades:0, losses:0 };
+      ["aHigh","aLow","aAtr","lHigh","lLow","vwapV","priceV"].forEach(function(id){ document.getElementById(id).value=""; });
+      saveDay(); renderAll(); return;
+    }
+   }catch(err){ flash("Error: "+(err&&err.message?err.message:err),"bad"); }
+  });
+  document.addEventListener("change",function(e){
+    var cb=e.target.closest("[data-check]");
+    if(cb){ day.checks[cb.dataset.check]=cb.checked; saveDay(); renderChecklist(); }
+  });
+
+  /* ---------------- live data (xaus.com — free, no key, open CORS) ----------------
+     Spot: current price, single number, safe to apply directly.
+     Intraday + history: used to COMPUTE the Asian high/low and Daily ATR
+     ourselves. These are derived, not raw facts, so they're shown as a
+     suggestion with an explicit Apply button rather than written straight
+     into the fields — a timezone or data-gap edge case should be visible
+     and checkable against the chart, not silently trusted. */
+  var LIVE_BASE = "https://xaus.com/api/v1/";
+
+  function beirutHourDate(ms){
+    var fmt=new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Beirut',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',hour12:false});
+    var parts=fmt.formatToParts(new Date(ms)), o={};
+    parts.forEach(function(p){ o[p.type]=p.value; });
+    return { date:o.year+'-'+o.month+'-'+o.day, hour:+o.hour };
+  }
+  function parsePointTime(t){
+    if(typeof t==='number') return t>1e12?t:t*1000;
+    var num=Number(t);
+    if(t!=='' && !isNaN(num)) return num>1e12?num:num*1000;
+    var d=Date.parse(t);
+    return isNaN(d)?null:d;
+  }
+  function computeAsianFromIntraday(points){
+    var today=beirutHourDate(Date.now()).date, vals=[];
+    (points||[]).forEach(function(pt){
+      var ms=parsePointTime(pt.t); if(ms==null) return;
+      var bd=beirutHourDate(ms);
+      if(bd.date===today && bd.hour>=1 && bd.hour<10) vals.push(pt.p);
+    });
+    if(!vals.length) return null;
+    return { high:Math.max.apply(null,vals), low:Math.min.apply(null,vals), n:vals.length };
+  }
+  function computeATR14(points){
+    var pts=(points||[]).slice().sort(function(a,b){ return a.d<b.d?-1:1; });
+    if(pts.length<2) return null;
+    var trs=[];
+    for(var i=1;i<pts.length;i++){
+      var cur=pts[i], prev=pts[i-1];
+      trs.push(Math.max(cur.h-cur.l, Math.abs(cur.h-prev.c), Math.abs(cur.l-prev.c)));
+    }
+    var last14=trs.slice(-14);
+    return last14.length ? last14.reduce(function(s,x){return s+x;},0)/last14.length : null;
+  }
+
+  var liveSuggestion=null;
+
+  function flashLive(id,msg,kind){
+    var el=document.getElementById(id);
+    if(el) el.innerHTML='<span class="'+(kind==="bad"?"neg":"pos")+'">'+msg+'</span>';
+  }
+
+  function fetchLive(){
+    var btn=document.getElementById("liveFetchBtn");
+    if(btn){ btn.disabled=true; btn.textContent="Fetching\u2026"; }
+    Promise.all([
+      fetch(LIVE_BASE+"spot").then(function(r){ return r.json(); }),
+      fetch(LIVE_BASE+"intraday?symbol=xau&hours=24").then(function(r){ return r.json(); }),
+      fetch(LIVE_BASE+"history").then(function(r){ return r.json(); })
+    ]).then(function(res){
+      var spot=res[0], intraday=res[1], hist=res[2];
+      liveSuggestion={
+        price: spot && typeof spot.spot_usd_oz==="number" ? spot.spot_usd_oz : null,
+        asian: intraday && Array.isArray(intraday.points) ? computeAsianFromIntraday(intraday.points) : null,
+        atr: hist && Array.isArray(hist.points) ? computeATR14(hist.points) : null,
+        fetchedAt: new Date()
+      };
+      renderLiveSuggestion();
+    }).catch(function(err){
+      var out=document.getElementById("liveOut");
+      if(out) out.innerHTML='<div class="hint" style="color:var(--clay)">Live fetch failed: '+esc(err&&err.message?err.message:String(err))+'. Enter manually.</div>';
+    }).then(function(){
+      if(btn){ btn.disabled=false; btn.textContent="Fetch live (Asian range + ATR)"; }
+    });
+  }
+
+  function renderLiveSuggestion(){
+    var out=document.getElementById("liveOut");
+    if(!out || !liveSuggestion) return;
+    var s=liveSuggestion;
+    var h='<div class="hint" style="margin-top:10px">Source: xaus.com \u00b7 indicative mid-market, not a tradable quote \u00b7 fetched '+esc(s.fetchedAt.toLocaleTimeString())+'</div>';
+    h+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">';
+    if(s.asian) h+='<button class="btn g" data-act="applyAsian" data-h="'+s.asian.high+'" data-l="'+s.asian.low+'">Use Asian '+s.asian.low.toFixed(2)+'\u2013'+s.asian.high.toFixed(2)+' (n='+s.asian.n+')</button>';
+    else h+='<span class="hint">Not enough intraday coverage for today\u2019s 01:00\u201310:00 window yet \u2014 try again after 10:00 Beirut.</span>';
+    if(s.atr!=null) h+='<button class="btn g" data-act="applyAtr" data-v="'+s.atr.toFixed(2)+'">Use ATR '+s.atr.toFixed(2)+'</button>';
+    h+='</div>';
+    out.innerHTML=h;
+  }
+
+  function fetchVwapPrice(){
+    var btn=document.getElementById("vwapFetchBtn");
+    if(btn){ btn.disabled=true; btn.textContent="Fetching\u2026"; }
+    fetch(LIVE_BASE+"spot").then(function(r){ return r.json(); }).then(function(spot){
+      if(spot && typeof spot.spot_usd_oz==="number"){
+        day.price=String(spot.spot_usd_oz.toFixed(2));
+        document.getElementById("priceV").value=day.price;
+        saveDay(); renderVwap();
+        flashLive("vwapMsg","Live price applied ("+day.price+") \u2014 xaus.com, indicative mid-market.","ok");
+      } else {
+        flashLive("vwapMsg","Live fetch returned no price.","bad");
+      }
+    }).catch(function(err){
+      flashLive("vwapMsg","Live fetch failed: "+esc(err&&err.message?err.message:String(err)),"bad");
+    }).then(function(){
+      if(btn){ btn.disabled=false; btn.textContent="Use live price"; }
+    });
+  }
+
+  function loadChart(){
+    var container=document.getElementById("tv_chart");
+    if(!container) return;
+    var s=document.createElement("script");
+    s.src="https://s3.tradingview.com/tv.js";
+    s.async=true;
+    s.onload=function(){
+      try{
+        new window.TradingView.widget({
+          autosize:true,
+          symbol:"OANDA:XAUUSD",
+          interval:"5",
+          timezone:"Asia/Beirut",
+          theme:"dark",
+          style:"1",
+          locale:"en",
+          toolbar_bg:"#1E1B16",
+          enable_publishing:false,
+          hide_top_toolbar:false,
+          allow_symbol_change:true,
+          container_id:"tv_chart"
+        });
+      }catch(e){
+        container.innerHTML='<div style="padding:20px;color:#948A78;font-family:IBM Plex Mono,monospace;font-size:12px">Chart failed to initialize.</div>';
+      }
+    };
+    s.onerror=function(){
+      container.innerHTML='<div style="padding:20px;color:#948A78;font-family:IBM Plex Mono,monospace;font-size:12px">Could not load the TradingView widget \u2014 check your connection.</div>';
+    };
+    document.body.appendChild(s);
+  }
+
+  loadDay(); loadHist();
+  renderAll();
+  tick();
+  setInterval(tick,1000);
+  wireDrop();
+  loadChart();
+})();
+</script>
+</body>
+</html>

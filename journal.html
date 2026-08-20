@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#15130F">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>XAU/USD Journal — The Desk</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap');
+
+:root{
+  --bg:#15130F; --panel:#1E1B16; --raise:#262119; --rule:#3A3229; --rule2:#2C2620;
+  --text:#EDE6D6; --dim:#948A78; --faint:#6B6355;
+  --brass:#CF9B3F; --jade:#7FA981; --clay:#C06B54; --steel:#6E8B9B;
+  --disp:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;
+  padding-bottom:70px;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(1100px 480px at 50% -140px, rgba(207,155,63,.10), transparent 70%)}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+.desknav{background:var(--panel);border-bottom:1px solid var(--rule2)}
+.desknav-in{max-width:1120px;margin:0 auto;padding:11px 22px;display:flex;align-items:center;gap:4px;overflow-x:auto;scrollbar-width:none}
+.desknav-in::-webkit-scrollbar{display:none}
+.desknav-mark{font-family:var(--disp);font-weight:800;font-size:12.5px;letter-spacing:.02em;display:flex;align-items:center;gap:7px;
+  margin-right:10px;color:var(--text);text-decoration:none;flex:none}
+.desknav-mark .ingot{width:16px;height:10px}
+.desknav-item{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
+  text-decoration:none;padding:7px 12px;border-radius:100px;white-space:nowrap;transition:color .15s,background .15s;flex:none}
+.desknav-item:hover{color:var(--text)}
+.desknav-item[data-here="1"]{color:var(--bg);background:var(--brass);font-weight:600}
+
+:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+
+.top{padding:26px 0 0}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.mark{font-family:var(--disp);font-weight:800;font-size:17px;display:flex;align-items:center;gap:9px}
+.ingot{width:22px;height:13px;background:linear-gradient(150deg,#E8BC66,#B97F27);
+  clip-path:polygon(14% 0,86% 0,100% 100%,0 100%);border-radius:1px;flex:none}
+.clock{font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.05em}
+.nav{display:flex;gap:6px;margin-top:20px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.nav::-webkit-scrollbar{display:none}
+.nav button{font-family:var(--mono);font-size:11px;letter-spacing:.09em;text-transform:uppercase;
+  padding:8px 14px;border:1px solid var(--rule2);border-radius:100px;color:var(--dim);white-space:nowrap;
+  transition:color .16s,border-color .16s,background .16s}
+.nav button:hover{color:var(--text);border-color:var(--rule)}
+.nav button[data-on="1"]{color:var(--bg);background:var(--brass);border-color:var(--brass);font-weight:500}
+
+.hero{position:relative;margin-top:24px;border:1px solid var(--rule2);border-radius:6px;
+  background:linear-gradient(180deg,var(--panel),#191610);overflow:hidden}
+.hero-in{position:relative;z-index:2;padding:26px 26px 0}
+.hero-eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+.hero-big{font-family:var(--mono);font-weight:500;font-size:clamp(44px,10vw,74px);line-height:.98;
+  letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:10px 0 2px}
+.hero-unit{font-family:var(--disp);font-weight:500;font-size:15px;color:var(--dim)}
+.hero-meta{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 0}
+.chip{font-family:var(--mono);font-size:11px;color:var(--dim);border:1px solid var(--rule2);
+  padding:4px 10px;border-radius:100px;background:rgba(0,0,0,.2)}
+.chip b{color:var(--text);font-weight:500}
+.hero-curve{display:block;width:100%;height:96px;margin-top:6px}
+.winnav{display:grid;grid-template-columns:34px 1fr 34px;align-items:center;gap:8px}
+.arrow{font-size:22px;line-height:1;color:var(--dim);border:1px solid var(--rule2);border-radius:100px;
+  width:34px;height:34px;display:flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s}
+.arrow:hover:not([disabled]){color:var(--text);border-color:var(--dim)}
+.arrow[disabled]{opacity:.28;cursor:default}
+.axis{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;
+  color:var(--faint);padding:0 2px 14px}
+.hero-foot{position:relative;z-index:2;display:flex;flex-wrap:wrap;
+  border-top:1px solid var(--rule2);background:rgba(0,0,0,.22)}
+.hf{flex:1 1 120px;padding:14px 18px;border-right:1px solid var(--rule2)}
+.hf:last-child{border-right:none}
+.hf-k{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+.hf-v{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums;margin-top:3px}
+
+.sect{padding:44px 0 0}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+h2{font-family:var(--disp);font-weight:700;font-size:29px;letter-spacing:-.02em;margin:8px 0 0}
+h3{font-family:var(--disp);font-weight:700;font-size:19px;margin:8px 0 0}
+.lede{font-size:13.5px;color:var(--dim);max-width:66ch;line-height:1.65;margin-top:9px}
+.card{background:var(--panel);border:1px solid var(--rule2);border-radius:6px;padding:20px;margin-top:14px}
+
+.score{margin-top:22px;border-top:1px solid var(--rule2)}
+.row{padding:20px 0;border-bottom:1px solid var(--rule2)}
+.row-head{display:flex;justify-content:center;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.row-name{font-family:var(--disp);font-weight:700;font-size:15px}
+.badge{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:100px;
+  border:1px solid var(--rule);color:var(--dim);white-space:nowrap}
+.badge[data-v="lead"]{color:var(--jade);border-color:rgba(127,169,129,.5);background:rgba(127,169,129,.08)}
+.badge[data-v="thin"]{color:var(--brass);border-color:rgba(207,155,63,.45);background:rgba(207,155,63,.07)}
+.dv{display:grid;grid-template-columns:1fr 12px 1fr;align-items:center}
+.dv-side{display:flex;align-items:center;gap:11px;min-width:0}
+.dv-side.r{flex-direction:row-reverse}
+.dv-bar{flex:1;height:26px;display:flex}
+.dv-side.l .dv-bar{justify-content:flex-end}
+.dv-fill{height:100%;width:0;border-radius:2px;transition:width .8s cubic-bezier(.22,.75,.3,1)}
+.dv-fill.pos{background:linear-gradient(90deg,rgba(127,169,129,.35),var(--jade))}
+.dv-side.r .dv-fill.pos{background:linear-gradient(270deg,rgba(127,169,129,.35),var(--jade))}
+.dv-fill.neg{background:linear-gradient(90deg,rgba(192,107,84,.35),var(--clay))}
+.dv-side.r .dv-fill.neg{background:linear-gradient(270deg,rgba(192,107,84,.35),var(--clay))}
+.dv-axis{height:34px;background:var(--rule);width:1px;margin:0 auto}
+.dv-lab{flex:none;width:116px}
+.dv-side.r .dv-lab{text-align:right}
+.dv-nm{font-family:var(--disp);font-weight:500;font-size:13px;line-height:1.2}
+.dv-n{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.dv-v{font-family:var(--mono);font-size:14px;font-variant-numeric:tabular-nums;flex:none;width:64px}
+.dv-side.r .dv-v{text-align:right}
+.dv-sub{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.row-note{font-size:12.5px;color:var(--faint);line-height:1.6;margin-top:13px;text-align:center;max-width:64ch;margin:13px auto 0}
+
+.brow{display:grid;grid-template-columns:128px 1fr 78px;gap:12px;align-items:center;margin-top:11px}
+.blab{font-family:var(--mono);font-size:11px;color:var(--dim)}
+.btrack{height:10px;background:var(--raise);border-radius:2px;position:relative;overflow:hidden}
+.bzero{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--rule)}
+.bfill{position:absolute;top:0;bottom:0;width:0;transition:width .8s cubic-bezier(.22,.75,.3,1)}
+.bfill.pos{left:50%;background:var(--jade)}
+.bfill.neg{right:50%;background:var(--clay)}
+.bval{font-family:var(--mono);font-size:12.5px;font-variant-numeric:tabular-nums;text-align:right}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.pos{color:var(--jade)} .neg{color:var(--clay)} .dimc{color:var(--dim)}
+
+.scroll{overflow-x:auto;margin-top:16px;-webkit-overflow-scrolling:touch}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint);
+  text-align:left;font-weight:500;padding:10px 11px;border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:11px;border-bottom:1px solid var(--rule2);vertical-align:middle}
+tbody tr:hover{background:var(--panel)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums;font-size:12px}
+.right{text-align:right}
+.tag{font-family:var(--mono);font-size:10px;color:var(--dim);border:1px solid var(--rule2);
+  padding:2px 7px;border-radius:100px;white-space:nowrap;display:inline-block}
+.tag.bad{color:var(--clay);border-color:rgba(192,107,84,.4)}
+
+.pills{display:flex;gap:7px;margin-top:18px;flex-wrap:wrap}
+.pill{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  padding:7px 15px;border:1px solid var(--rule2);border-radius:100px;color:var(--dim)}
+.pill[data-on="1"]{color:var(--bg);background:var(--brass);border-color:var(--brass)}
+.pill:hover{color:var(--text)} .pill[data-on="1"]:hover{color:var(--bg)}
+
+.drop{border:1.5px dashed var(--rule);border-radius:8px;padding:36px 24px;text-align:center;
+  margin-top:18px;background:var(--panel);transition:border-color .2s,background .2s}
+.drop.over{border-color:var(--brass);background:rgba(207,155,63,.07)}
+.drop h3{margin:0 0 8px}
+.drop p{color:var(--dim);font-size:13.5px;max-width:52ch;margin:0 auto 20px;line-height:1.6}
+
+.acts{display:flex;gap:11px;align-items:center;margin-top:22px;flex-wrap:wrap;justify-content:center}
+.acts.l{justify-content:flex-start}
+.btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
+  background:var(--brass);color:#15130F;padding:13px 24px;border-radius:4px;font-weight:600;transition:filter .15s}
+.btn:hover{filter:brightness(1.09)}
+.btn.g{background:none;color:var(--dim);border:1px solid var(--rule);font-weight:400}
+.btn.g:hover{color:var(--text);border-color:var(--dim);filter:none}
+.btn.d{background:none;color:var(--clay);border:1px solid rgba(192,107,84,.45);font-weight:400}
+.link{color:var(--brass);font-family:var(--mono);font-size:12px;text-decoration:underline;padding:0}
+.link.warn{color:var(--clay)}
+
+.note{font-family:var(--mono);font-size:11.5px;padding:11px 14px;border-radius:4px;margin-top:16px;
+  border:1px solid rgba(207,155,63,.4);color:var(--brass);background:rgba(207,155,63,.06);
+  display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+.note.bad{border-color:rgba(192,107,84,.45);color:var(--clay);background:rgba(192,107,84,.06)}
+.note.ok{border-color:rgba(127,169,129,.45);color:var(--jade);background:rgba(127,169,129,.06)}
+
+.empty{padding:60px 20px;text-align:center}
+.empty h3{font-size:23px;margin-bottom:10px}
+.empty p{color:var(--dim);font-size:14px;max-width:48ch;margin:0 auto 26px;line-height:1.65}
+.foot{margin-top:52px;padding-top:20px;border-top:1px solid var(--rule2);
+  font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.9}
+.daynote{font-size:13px;color:var(--dim);line-height:1.65;margin-top:10px}
+
+@media (max-width:860px){
+  .grid2{grid-template-columns:1fr;gap:26px}
+  .dv{grid-template-columns:1fr}
+  .dv-axis{display:none}
+  .dv-side.r{flex-direction:row}
+  .dv-side.r .dv-bar{justify-content:flex-start}
+  .dv-side.r .dv-lab,.dv-side.r .dv-v{text-align:left}
+  .dv-side.r .dv-fill.pos{background:linear-gradient(90deg,rgba(127,169,129,.35),var(--jade))}
+  .dv-side.r .dv-fill.neg{background:linear-gradient(90deg,rgba(192,107,84,.35),var(--clay))}
+  .dv-side{margin-top:9px}
+  .hero-in{padding:22px 20px 0}
+  h2{font-size:25px}
+}
+@media (prefers-reduced-motion:reduce){ .dv-fill,.bfill{transition:none} }
+</style>
+</head>
+<body>
+<div class="desknav"><div class="desknav-in">
+  <a href="index.html" class="desknav-mark"><span class="ingot"></span>THE DESK</a>
+  <a href="lab.html" class="desknav-item" data-here="0">Lab</a>
+  <a href="indicators.html" class="desknav-item" data-here="0">Indicators</a>
+  <a href="journal.html" class="desknav-item" data-here="1">Journal</a>
+  <a href="session-board.html" class="desknav-item" data-here="0">Session Board</a>
+</div></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="toprow">
+      <div class="mark"><span class="ingot"></span>XAU/USD Journal</div>
+      <div class="clock" id="clock">Beirut UTC+3</div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+  </header>
+  <div id="banners"></div>
+  <main id="view"></main>
+  <div class="foot" id="foot"></div>
+</div>
+<input type="file" id="filepick" accept=".xlsx,.xlsm,.xls" style="position:fixed;left:-9999px">
+
+<script>
+(function () {
+  "use strict";
+
+  var SYMBOL = "XAUUSD";
+  var KEY = "xauusd-desk:trades:" + SYMBOL;
+  var LEGACY_KEYS = ["xauusd-journal-v3", "session-board-history"];
+  var TABS = [["home","Overview"],["periods","Periods"],["days","Day log"],["trades","Trades"],["data","Import / export"]];
+
+  /* Column order matches the Trade Log sheet exactly, so export round-trips. */
+  var SHEET_COLS = [
+    ["date","Date"], ["tradeNo","Trade #\n(of day)"], ["session","Session"], ["dayType","Day Type"],
+    ["dayChar","Day\nCharacter"], ["asianHigh","Asian High"], ["asianLow","Asian Low"], ["atr","Daily ATR"],
+    ["asianRange","Asian Range\n(pts)"], ["asianPctATR","Asian Range\n% of ATR"], ["dayPctATR","Day Range\n% ATR\n(at entry)"],
+    ["setup","Setup Type"], ["direction","Direction"], ["rsi","RSI\nat Entry"],
+    ["entry1","Entry\nBullet 1"], ["entry2","Entry\nBullet 2"], ["sl","Stop Loss"], ["risk1R","Risk 1R\n(Bullet 1, pts)"],
+    ["tp1","TP1\n(Bullet 1)"], ["tp2","TP2\n(Bullet 2)"], ["exit1","Exit\nBullet 1"], ["exit2","Exit\nBullet 2"],
+    ["res1","Result\nBullet 1 (pts)"], ["res2","Result\nBullet 2 (pts)"], ["totalPts","Total Result\n(pts)"],
+    ["resR","Result\n(R)"], ["ruleBroken","Rule\nBroken?"], ["confluence","Confluence / Setup Notes"],
+    ["notes","Notes / Lessons"], ["h1State","1H State\nat Entry"]
+  ];
+  var DAY_COLS = [
+    ["date","Date"],["dayNo","Day #"],["asianHigh","Asian High"],["asianLow","Asian Low"],["atr","Daily ATR"],
+    ["asianPctATR","Asian Range\n% of ATR"],["dayType","Day Type"],["dayChar","Day\nCharacter"],
+    ["tradesTaken","Trades\nTaken"],["notes","Notes / What Happened"]
+  ];
+
+  var state = { trades: [], days: [], tab: "home", period: "daily", view: "daily", offset: 0,
+                msg: null, msgKind: "", imported: null, confirmClear: false };
+
+  /* ---------------- utils ---------------- */
+  function n(v){ var x = typeof v==="number" ? v : parseFloat(v); return isFinite(x) ? x : 0; }
+  function has(v){ return v!==null && v!==undefined && v!==""; }
+  function fmt(v,d){ d=d===undefined?1:d; return (v>0?"+":"") + v.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d}); }
+  function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
+  function cls(v){ return v>0?"pos":v<0?"neg":"dimc"; }
+  function say(m,k){ state.msg=m; state.msgKind=k||""; }
+  function pts(t){ return n(t.totalPts); }
+  function R(t){ return n(t.resR); }
+  function sorted(){
+    return state.trades.slice().sort(function(a,b){
+      if(a.date!==b.date) return a.date<b.date?-1:1;
+      return n(a.tradeNo)-n(b.tradeNo);
+    });
+  }
+  function agg(list){
+    var c=list.length;
+    var p=list.reduce(function(s,t){return s+pts(t);},0);
+    var r=list.reduce(function(s,t){return s+R(t);},0);
+    var w=list.filter(function(t){return pts(t)>0;}).length;
+    return { n:c, pts:p, R:r, wins:w, losses:list.filter(function(t){return pts(t)<0;}).length,
+             avg:c?p/c:0, avgR:c?r/c:0, wr:c?w/c*100:0 };
+  }
+  function perfStats(list){
+    var winners=list.filter(function(t){return pts(t)>0;});
+    var losers=list.filter(function(t){return pts(t)<0;});
+    var grossWin=winners.reduce(function(s,t){return s+pts(t);},0);
+    var grossLoss=losers.reduce(function(s,t){return s+pts(t);},0); // negative or 0
+    var pf = grossLoss<0 ? grossWin/Math.abs(grossLoss) : (grossWin>0 ? Infinity : null);
+    var avgWinner = winners.length ? grossWin/winners.length : null;
+    var avgLoser  = losers.length  ? grossLoss/losers.length  : null;
+    var chron=list.slice().sort(function(a,b){
+      if(a.date!==b.date) return a.date<b.date?-1:1;
+      return n(a.tradeNo)-n(b.tradeNo);
+    });
+    var run=0, peak=0, maxDD=0;
+    chron.forEach(function(t){ run+=pts(t); if(run>peak) peak=run; var dd=peak-run; if(dd>maxDD) maxDD=dd; });
+    var allPts=list.map(pts);
+    return {
+      pf:pf, avgWinner:avgWinner, avgLoser:avgLoser, maxDD:maxDD,
+      best: allPts.length?Math.max.apply(null,allPts):null,
+      worst: allPts.length?Math.min.apply(null,allPts):null,
+      winnersN:winners.length, losersN:losers.length
+    };
+  }
+  function toISO(v){
+    if(!has(v)) return "";
+    if(typeof v==="number"){ var d=new Date(Math.round((v-25569)*86400000)); return d.toISOString().slice(0,10); }
+    var s=String(v).trim();
+    var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/); if(m) return m[0];
+    var d2=new Date(s); if(!isNaN(d2.getTime())) return d2.toISOString().slice(0,10);
+    return s;
+  }
+  function norm(h){ return String(h==null?"":h).replace(/\s+/g," ").trim().toLowerCase(); }
+
+  /* ---------------- storage ----------------
+     Trade history now lives under one shared key per symbol, so the
+     Journal and the Session Board's suggestion cards read the same
+     data — importing on either page updates both. Older browsers may
+     still have data under the pre-merge keys; adopt it once, then
+     write it back under the shared key so every page agrees after that. */
+  function load(){
+    try{
+      var raw=localStorage.getItem(KEY);
+      if(raw){ var p=JSON.parse(raw);
+        state.trades=Array.isArray(p.trades)?p.trades:[];
+        state.days=Array.isArray(p.days)?p.days:[];
+        return;
+      }
+      for(var i=0;i<LEGACY_KEYS.length;i++){
+        var old=localStorage.getItem(LEGACY_KEYS[i]);
+        if(!old) continue;
+        var op=JSON.parse(old);
+        if(Array.isArray(op.trades) && op.trades.length){
+          state.trades=op.trades; state.days=Array.isArray(op.days)?op.days:[];
+          persist();
+          say("Brought forward "+state.trades.length+" trades saved earlier under a separate key.","ok");
+          return;
+        }
+      }
+    }catch(e){ say("Couldn't read saved data in this browser.","bad"); }
+  }
+  function persist(){
+    try{ localStorage.setItem(KEY, JSON.stringify({trades:state.trades, days:state.days})); }
+    catch(e){ say("Storage is blocked here — the import won't survive a reload.","bad"); }
+    render();
+  }
+
+  /* ---------------- xlsx import ---------------- */
+  function readWorkbook(file){
+    if(typeof XLSX==="undefined"){
+      say("The spreadsheet reader didn't load. Check your connection and reload the page.","bad"); render(); return;
+    }
+    var fr=new FileReader();
+    fr.onerror=function(){ say("Couldn't read that file.","bad"); render(); };
+    fr.onload=function(ev){
+      try{
+        var wb=XLSX.read(new Uint8Array(ev.target.result),{type:"array"});
+        var res=parseWorkbook(wb);
+        if(!res.trades.length){
+          say("No trade rows found. Expecting a sheet named Trade Log with a Date column in its header row.","bad");
+          render(); return;
+        }
+        state.trades=res.trades; state.days=res.days;
+        state.imported={ file:file.name, when:new Date().toLocaleString(), trades:res.trades.length,
+                         days:res.days.length, skipped:res.skipped, sheets:wb.SheetNames.join(", ") };
+        state.tab="home";
+        say("Imported "+res.trades.length+" trades and "+res.days.length+" day records from "+file.name+".","ok");
+        persist();
+      }catch(err){
+        say("Import failed: "+(err&&err.message?err.message:err),"bad"); render();
+      }
+    };
+    fr.readAsArrayBuffer(file);
+  }
+
+  function findSheet(wb, wanted){
+    for(var i=0;i<wb.SheetNames.length;i++){
+      if(norm(wb.SheetNames[i])===norm(wanted)) return wb.Sheets[wb.SheetNames[i]];
+    }
+    return null;
+  }
+  function gridOf(ws){ return ws ? XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:null}) : []; }
+
+  /* Locate the header row by finding "date" in the first few columns. */
+  function headerIndex(grid){
+    for(var i=0;i<Math.min(grid.length,15);i++){
+      var row=grid[i]||[];
+      for(var j=0;j<Math.min(row.length,4);j++){
+        if(norm(row[j])==="date") return i;
+      }
+    }
+    return -1;
+  }
+  function mapRow(row, hdr, spec){
+    var out={};
+    spec.forEach(function(pair){
+      var target=norm(pair[1]);
+      var idx=hdr.indexOf(target);
+      out[pair[0]] = idx>-1 ? row[idx] : null;
+    });
+    return out;
+  }
+
+  function parseWorkbook(wb){
+    var out={trades:[],days:[],skipped:0};
+
+    var tg=gridOf(findSheet(wb,"Trade Log"));
+    if(!tg.length){ // fall back to the first sheet that has a Date header
+      for(var i=0;i<wb.SheetNames.length;i++){
+        var g=gridOf(wb.Sheets[wb.SheetNames[i]]);
+        if(headerIndex(g)>-1){ tg=g; break; }
+      }
+    }
+    var hi=headerIndex(tg);
+    if(hi>-1){
+      var hdr=(tg[hi]||[]).map(norm);
+      for(var r=hi+1;r<tg.length;r++){
+        var row=tg[r]||[];
+        if(!has(row[hdr.indexOf("date")>-1?hdr.indexOf("date"):0])) { continue; }
+        var rec=mapRow(row,hdr,SHEET_COLS);
+        rec.date=toISO(rec.date);
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(rec.date)){ out.skipped++; continue; }
+        // Recompute the total if the sheet left it blank but has both bullets.
+        if(!has(rec.totalPts) && (has(rec.res1)||has(rec.res2))) rec.totalPts=n(rec.res1)+n(rec.res2);
+        rec.id="x"+r+"-"+rec.date;
+        out.trades.push(rec);
+      }
+    }
+
+    var dg=gridOf(findSheet(wb,"Day Log"));
+    var dhi=headerIndex(dg);
+    if(dhi>-1){
+      var dhdr=(dg[dhi]||[]).map(norm);
+      for(var q=dhi+1;q<dg.length;q++){
+        var drow=dg[q]||[];
+        var d=mapRow(drow,dhdr,DAY_COLS);
+        d.date=toISO(d.date);
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(d.date)) continue;
+        out.days.push(d);
+      }
+    }
+    return out;
+  }
+
+  /* ---------------- export ---------------- */
+  function tradeAOA(){
+    var rows=[["XAUUSD Day-Trading Journal — Joseph"],
+              ["Exported from the dashboard. Column order matches the Trade Log sheet."],
+              [], SHEET_COLS.map(function(c){ return c[1]; }), []];
+    sorted().forEach(function(t){ rows.push(SHEET_COLS.map(function(c){ 
+      var v=t[c[0]]; return v===null||v===undefined?"":v; })); });
+    return rows;
+  }
+  function exportXlsx(){
+    if(typeof XLSX==="undefined"){ say("The spreadsheet writer didn't load. Use CSV instead.","bad"); render(); return; }
+    try{
+      var wb=XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(tradeAOA()), "Trade Log");
+      if(state.days.length){
+        var d=[DAY_COLS.map(function(c){return c[1];})];
+        state.days.forEach(function(x){ d.push(DAY_COLS.map(function(c){ 
+          var v=x[c[0]]; return v===null||v===undefined?"":v; })); });
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(d), "Day Log");
+      }
+      XLSX.writeFile(wb, "XAUUSD_Trading_Journal_export.xlsx");
+      say("Exported XAUUSD_Trading_Journal_export.xlsx to your downloads.","ok");
+    }catch(e){ say("Export failed: "+(e&&e.message?e.message:e),"bad"); }
+    render();
+  }
+  function csvText(){
+    var q=function(v){ return '"'+String(v==null?"":v).replace(/"/g,'""')+'"'; };
+    var rows=[SHEET_COLS.map(function(c){ return q(c[1].replace(/\n/g," ")); }).join(",")];
+    sorted().forEach(function(t){ rows.push(SHEET_COLS.map(function(c){ return q(t[c[0]]); }).join(",")); });
+    return rows.join("\r\n");
+  }
+  function download(name,text,mime){
+    try{
+      var blob=new Blob([mime.indexOf("csv")>-1?"\uFEFF"+text:text],{type:mime+";charset=utf-8"});
+      var url=URL.createObjectURL(blob), a=document.createElement("a");
+      a.href=url; a.download=name; a.style.display="none";
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function(){ URL.revokeObjectURL(url); },1200);
+      say("Saved "+name+" to your downloads.","ok");
+    }catch(e){ say("Download blocked here — copy the text instead.","bad"); }
+    render();
+  }
+  function copyText(text,label){
+    var ta=document.createElement("textarea");
+    ta.value=text; ta.style.position="fixed"; ta.style.opacity="0";
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    var ok=false; try{ ok=document.execCommand("copy"); }catch(e){}
+    ta.remove();
+    if(ok){ say(label+" copied.","ok"); render(); return; }
+    if(navigator.clipboard&&navigator.clipboard.writeText)
+      navigator.clipboard.writeText(text).then(function(){ say(label+" copied.","ok"); render(); },
+        function(){ say("Copy blocked. Select the text and copy manually.","bad"); render(); });
+    else { say("Copy blocked. Select the text and copy manually.","bad"); render(); }
+  }
+
+  /* ---------------- analytics ---------------- */
+  function comparisons(){
+    var T=state.trades;
+    function c(label,an,af,bn,bf,note){
+      var A=agg(T.filter(af)), B=agg(T.filter(bf)); A.name=an; B.name=bn;
+      return {label:label,note:note,a:A,b:B};
+    }
+    var yes=function(t){ return String(t.ruleBroken||"").toUpperCase().indexOf("Y")===0; };
+    return [
+      c("Rules followed","Followed",function(t){return !yes(t);},"Broken",yes,
+        "Straight from the Rule Broken column. If the followed side isn't clearly ahead, the rules aren't earning their keep."),
+      c("Setup type","Continuation",function(t){return t.setup==="Continuation";},"Reversal",function(t){return t.setup==="Reversal";},
+        "\u201cOther\u201d trades sit outside this split — they show up in the setup table below."),
+      c("Trade number in the day","1st or 2nd",function(t){return n(t.tradeNo)<=2;},"3rd or later",function(t){return n(t.tradeNo)>=3;},
+        "Whether the back end of the daily budget is worth spending."),
+      c("Session",  "London",function(t){return t.session==="London";},"New York",function(t){return t.session==="NY";},
+        "Only rows with the Session column filled in are counted here."),
+      c("Direction","Long",function(t){return t.direction==="Long";},"Short",function(t){return t.direction==="Short";},""),
+      c("RSI at entry","Stretched (\u226435 or \u226570)",function(t){return has(t.rsi)&&(n(t.rsi)<=35||n(t.rsi)>=70);},
+        "Middle (36\u201369)",function(t){return has(t.rsi)&&n(t.rsi)>35&&n(t.rsi)<70;},
+        "Entering while RSI is already at an extreme, versus entering from the middle of the range.")
+    ];
+  }
+  function groupBy(field){
+    var map={};
+    state.trades.forEach(function(t){
+      var k=has(t[field])?String(t[field]):"(blank)";
+      (map[k]=map[k]||[]).push(t);
+    });
+    return Object.keys(map).map(function(k){ var a=agg(map[k]); a.name=k; return a; })
+      .sort(function(x,y){ return y.n-x.n; });
+  }
+
+  function mondayOf(ds){ var d=new Date(ds+"T00:00:00"); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.toISOString().slice(0,10); }
+  function pKey(ds,m){ return m==="daily"?ds : m==="weekly"?mondayOf(ds) : ds.slice(0,7); }
+  function pLabel(k,m){
+    if(m==="daily") return new Date(k+"T00:00:00").toLocaleDateString(undefined,{weekday:"short",month:"short",day:"numeric"});
+    if(m==="weekly"){ var s=new Date(k+"T00:00:00"), e=new Date(s); e.setDate(s.getDate()+6);
+      return s.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" – "+e.toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+    return new Date(k+"-01T00:00:00").toLocaleDateString(undefined,{month:"long",year:"numeric"});
+  }
+  function periods(m){
+    var map={};
+    sorted().forEach(function(t){ var k=pKey(t.date,m); (map[k]=map[k]||[]).push(t); });
+    return Object.keys(map).sort().map(function(k){
+      var list=map[k], a=agg(list), tots=list.map(pts), dd={};
+      list.forEach(function(t){ dd[t.date]=1; });
+      var broken=list.filter(function(t){ return String(t.ruleBroken||"").toUpperCase().indexOf("Y")===0; }).length;
+      return { key:k, label:pLabel(k,m), n:a.n, pts:a.pts, R:a.R, avg:a.avg, wr:a.wr, wins:a.wins, losses:a.losses,
+               broken:broken, best:Math.max.apply(null,tots), worst:Math.min.apply(null,tots),
+               days:Object.keys(dd).length, list:list };
+    });
+  }
+
+  /* ---------------- view pieces ---------------- */
+  function bar(v,scale){
+    var pct=scale?Math.min(50,Math.abs(v)/scale*50):0;
+    return '<div class="btrack"><div class="bzero"></div><div class="bfill '+(v>=0?"pos":"neg")+'" data-w="'+pct+'"></div></div>';
+  }
+  function sparkline(vals,w,h,stroke){
+    if(!vals.length) return "";
+    var pad=2, mn=Math.min.apply(null,[0].concat(vals)), mx=Math.max.apply(null,[0].concat(vals));
+    var span=(mx-mn)||1;
+    var X=function(i){ return pad+(i/Math.max(1,vals.length-1))*(w-pad*2); };
+    var Y=function(v){ return h-pad-((v-mn)/span)*(h-pad*2); };
+    var line=vals.map(function(v,i){ return X(i)+","+Y(v); }).join(" ");
+    return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" class="hero-curve" role="img" aria-label="Cumulative points">'+
+      '<defs><linearGradient id="gf" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="'+stroke+'" stop-opacity=".22"/><stop offset="100%" stop-color="'+stroke+'" stop-opacity="0"/></linearGradient></defs>'+
+      '<polygon points="'+X(0)+','+h+' '+line+' '+X(vals.length-1)+','+h+'" fill="url(#gf)"/>'+
+      '<line x1="'+pad+'" x2="'+(w-pad)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="#3A3229" vector-effect="non-scaling-stroke"/>'+
+      '<polyline points="'+line+'" fill="none" stroke="'+stroke+'" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
+      '<circle cx="'+X(vals.length-1)+'" cy="'+Y(vals[vals.length-1])+'" r="3.2" fill="#CF9B3F" vector-effect="non-scaling-stroke"/></svg>';
+  }
+  function hf(k,v,c){ return '<div class="hf"><div class="hf-k">'+esc(k)+'</div><div class="hf-v '+(c||"")+'">'+esc(v)+"</div></div>"; }
+  function dvSide(s,scale,side){
+    var pct=s.n?Math.min(100,Math.abs(s.avg)/scale*100):0;
+    return '<div class="dv-side '+side+'">'+
+      '<div class="dv-lab"><div class="dv-nm">'+esc(s.name)+'</div><div class="dv-n">n='+s.n+" · "+s.wr.toFixed(0)+"% win</div></div>"+
+      '<div class="dv-v '+cls(s.avg)+'">'+(s.n?fmt(s.avg):"—")+'<div class="dv-sub">'+(s.n?fmt(s.avgR,2)+"R":"")+"</div></div>"+
+      '<div class="dv-bar"><div class="dv-fill '+(s.avg>=0?"pos":"neg")+'" data-w="'+pct+'"></div></div></div>';
+  }
+  function noData(){
+    return '<div class="empty"><h3>No journal loaded</h3>'+
+      '<p>Import your XAUUSD Trading Journal workbook and every tab fills in from the Trade Log and Day Log sheets.</p>'+
+      '<div class="acts"><button class="btn" data-act="pick">Choose workbook</button>'+
+      '<button class="btn g" data-act="godata">How importing works</button></div></div>';
+  }
+
+  /* ---------------- views ---------------- */
+  var VIEWS=[["daily","Daily"],["weekly","Weekly"],["monthly","Monthly"],["yearly","Yearly"],["ytd","YTD"],["all","All time"]];
+
+  function windowKeys(v){
+    var ds={}; state.trades.forEach(function(t){ ds[t.date]=1; });
+    var dates=Object.keys(ds).sort();
+    if(!dates.length) return [];
+    if(v==="daily") return dates;
+    if(v==="weekly"){ var w={}; dates.forEach(function(d){ w[mondayOf(d)]=1; }); return Object.keys(w).sort(); }
+    if(v==="monthly"){ var m={}; dates.forEach(function(d){ m[d.slice(0,7)]=1; }); return Object.keys(m).sort(); }
+    if(v==="yearly"){ var y={}; dates.forEach(function(d){ y[d.slice(0,4)]=1; }); return Object.keys(y).sort(); }
+    return ["_"];
+  }
+  function windowOf(v,off){
+    var keys=windowKeys(v); if(!keys.length) return null;
+    var idx=Math.min(keys.length-1, Math.max(0, keys.length-1-off));
+    var key=keys[idx], list, label, sub;
+    if(v==="daily"){
+      list=state.trades.filter(function(t){ return t.date===key; });
+      label=new Date(key+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"});
+      sub="trade";
+    } else if(v==="weekly"){
+      list=state.trades.filter(function(t){ return mondayOf(t.date)===key; });
+      var s=new Date(key+"T00:00:00"), e=new Date(s); e.setDate(s.getDate()+6);
+      label="Week of "+s.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" – "+e.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+      sub="day";
+    } else if(v==="monthly"){
+      list=state.trades.filter(function(t){ return t.date.slice(0,7)===key; });
+      label=new Date(key+"-01T00:00:00").toLocaleDateString(undefined,{month:"long",year:"numeric"});
+      sub="day";
+    } else if(v==="yearly"){
+      list=state.trades.filter(function(t){ return t.date.slice(0,4)===key; });
+      label=key; sub="month";
+    } else if(v==="ytd"){
+      var yr=windowKeys("yearly").slice(-1)[0];
+      list=state.trades.filter(function(t){ return t.date.slice(0,4)===yr; });
+      label=yr+" to date"; key=yr; sub="month";
+    } else {
+      list=state.trades.slice();
+      var dk=windowKeys("daily");
+      label=dk.length>1 ? "All time · "+dk[0]+" → "+dk[dk.length-1] : "All time";
+      sub=dk.length>60?"month":"day";
+    }
+    return { key:key, label:label, list:list, sub:sub, idx:idx, count:keys.length, single:(v==="ytd"||v==="all") };
+  }
+  function buckets(win){
+    var out=[];
+    if(win.sub==="trade"){
+      win.list.slice().sort(function(a,b){ return n(a.tradeNo)-n(b.tradeNo); })
+        .forEach(function(t,i){ out.push({ label:"Trade "+(has(t.tradeNo)?t.tradeNo:i+1), pts:pts(t) }); });
+      return out;
+    }
+    var map={};
+    win.list.forEach(function(t){
+      var k = win.sub==="day" ? t.date : t.date.slice(0,7);
+      map[k]=(map[k]||0)+pts(t);
+    });
+    return Object.keys(map).sort().map(function(k){
+      var lab = win.sub==="day"
+        ? new Date(k+"T00:00:00").toLocaleDateString(undefined,{month:"short",day:"numeric"})
+        : new Date(k+"-01T00:00:00").toLocaleDateString(undefined,{month:"short",year:"2-digit"});
+      return { label:lab, pts:map[k] };
+    });
+  }
+  function modeOf(list, field){
+    var c={}, best=null;
+    list.forEach(function(t){ if(has(t[field])){ c[t[field]]=(c[t[field]]||0)+1; } });
+    Object.keys(c).forEach(function(k){ if(!best||c[k]>c[best]) best=k; });
+    return best ? { name:best, n:c[best], of:Object.keys(c).length } : null;
+  }
+  function cleanPct(list){
+    if(!list.length) return null;
+    var clean=list.filter(function(t){ return String(t.ruleBroken||"").toUpperCase().indexOf("Y")!==0; }).length;
+    return { pct:clean/list.length*100, clean:clean, broken:list.length-clean };
+  }
+
+  function viewHome(){
+    if(!state.trades.length) return noData();
+    var v=state.view, win=windowOf(v,state.offset);
+    var a=agg(win.list);
+    var o=agg(state.trades);
+    var bk=buckets(win);
+    var run=0, curve=bk.map(function(b){ run+=b.pts; return run; });
+    var stroke=a.pts>=0?"#7FA981":"#C06B54";
+    var dayRec=(v==="daily") ? state.days.filter(function(d){ return d.date===win.key; })[0] : null;
+    var dd={}; win.list.forEach(function(t){ dd[t.date]=1; });
+    var daysIn=Object.keys(dd).length;
+
+    var h='<div class="pills" style="margin-top:22px">'+VIEWS.map(function(x){
+      return '<button class="pill" data-on="'+(v===x[0]?1:0)+'" data-act="view" data-mode="'+x[0]+'">'+x[1]+"</button>";
+    }).join("")+"</div>";
+
+    h+='<section class="hero"><div class="hero-in">'+
+      '<div class="winnav">'+
+      (win.single?'<span></span>':'<button class="arrow" data-act="older" '+(win.idx<=0?"disabled":"")+'>&#8249;</button>')+
+      '<div class="hero-eye" style="text-align:center">'+esc(win.label)+"</div>"+
+      (win.single?'<span></span>':'<button class="arrow" data-act="newer" '+(win.idx>=win.count-1?"disabled":"")+'>&#8250;</button>')+
+      "</div>"+
+      '<div class="hero-big '+cls(a.pts)+'" style="text-align:center">'+fmt(a.pts)+"</div>"+
+      '<div class="hero-unit" style="text-align:center">points · '+fmt(a.R,2)+"R · "+a.n+(a.n===1?" trade":" trades")+
+        (v!=="daily"?" across "+daysIn+(daysIn===1?" day":" days"):"")+"</div>"+
+      '<div class="hero-meta" style="justify-content:center">'+heroChips(v,win,a,dayRec)+"</div>"+
+      sparkline(curve,600,96,stroke)+
+      (bk.length>1?'<div class="axis"><span>'+esc(bk[0].label)+"</span><span>"+esc(bk[bk.length-1].label)+"</span></div>":"")+
+      "</div>"+
+      '<div class="hero-foot">'+
+        hf("Net points",fmt(a.pts),cls(a.pts))+
+        hf("Net R",fmt(a.R,2),cls(a.R))+
+        hf("Trades",String(a.n))+
+        hf("Win rate",a.n?a.wr.toFixed(0)+"%":"—")+
+        hf("Avg / trade",a.n?fmt(a.avg):"—",cls(a.avg))+
+        hf(v==="daily"?"Best trade":"Days traded", v==="daily"?(a.n?fmt(Math.max.apply(null,win.list.map(pts))):"—"):String(daysIn))+
+      "</div></section>";
+
+    var ps=perfStats(state.trades);
+    h+='<section class="sect"><div class="eye">Career stats · full log</div><h2>Performance</h2>'+
+      '<p class="lede">Always the complete '+state.trades.length+' trades on file, not the window above — profit factor and drawdown need the full run to mean anything. Profit factor is gross points won ÷ gross points lost; expectancy is the average R per trade.</p>'+
+      '<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;margin-top:14px;background:var(--panel)">'+
+        hf("Win rate", o.n?o.wr.toFixed(0)+"%":"—")+
+        hf("Profit factor", ps.pf===Infinity?"\u221e":(ps.pf==null?"\u2014":ps.pf.toFixed(2)))+
+        hf("Expectancy (R)", o.n?fmt(o.avgR,2):"\u2014", cls(o.avgR))+
+        hf("Avg winner", ps.avgWinner!=null?fmt(ps.avgWinner):"\u2014", ps.avgWinner!=null?"pos":"dimc")+
+        hf("Avg loser", ps.avgLoser!=null?fmt(ps.avgLoser):"\u2014", ps.avgLoser!=null?"neg":"dimc")+
+        hf("Max drawdown", ps.maxDD>0?fmt(-ps.maxDD):"\u2014", ps.maxDD>0?"neg":"dimc")+
+        hf("Best trade", ps.best!=null?fmt(ps.best):"\u2014", ps.best!=null?"pos":"dimc")+
+        hf("Worst trade", ps.worst!=null?fmt(ps.worst):"\u2014", cls(ps.worst||0))+
+      "</div></section>";
+
+    h+='<section class="sect"><div class="eye">The open questions</div><h2>What\'s paying</h2>'+
+      '<p class="lede">These splits always use the <b>full log</b> — all '+state.trades.length+
+      ' trades — not the window above, because a comparison needs sample size to mean anything. Points per trade, with R underneath. Under five trades a side is marked thin: a hint, not a result.</p>'+
+      '<div class="score">';
+    comparisons().forEach(function(c){
+      var scale=Math.max(Math.abs(c.a.avg),Math.abs(c.b.avg),1);
+      var thin=Math.min(c.a.n,c.b.n)<5, gap=c.a.avg-c.b.avg, lead=gap>=0?c.a:c.b;
+      var badge=(!c.a.n||!c.b.n)?'<span class="badge">No comparison yet</span>'
+        : thin?'<span class="badge" data-v="thin">Thin · '+c.a.n+" v "+c.b.n+"</span>"
+        :'<span class="badge" data-v="lead">'+esc(lead.name)+" by "+Math.abs(gap).toFixed(1)+" pts</span>";
+      h+='<div class="row"><div class="row-head"><span class="row-name">'+esc(c.label)+"</span>"+badge+"</div>"+
+        '<div class="dv">'+dvSide(c.b,scale,"l")+'<div class="dv-axis"></div>'+dvSide(c.a,scale,"r")+"</div>";
+      if(c.note) h+='<div class="row-note">'+c.note+"</div>";
+      h+="</div>";
+    });
+    h+="</div></section>";
+
+    h+='<section class="sect"><div class="eye">Within '+esc(win.single?win.label.split(" ·")[0]:win.label)+"</div>"+
+      "<h2>Breakdowns</h2>"+
+      '<p class="lede">These follow the window above, so they change with the period selector.</p></section>';
+    h+='<div class="grid2" style="margin-top:14px">'+
+      groupCard("Classification","Points by day type","dayType",win.list)+
+      groupCard("Character","Points by day character","dayChar",win.list)+"</div>";
+    h+='<div class="grid2 sect">'+
+      groupCard("Setup","Points by setup type","setup",win.list)+
+      groupCard("Session","Points by session","session",win.list)+"</div>";
+    h+='<div class="grid2 sect">'+
+      orderedCard("Calendar","Points by weekday",win.list,
+        function(t){ return ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date(t.date+"T00:00:00Z").getUTCDay()]; },
+        ["Mon","Tue","Wed","Thu","Fri","Sat","Sun"])+
+      orderedCard("Sequence","Points by trade number in the day",win.list,
+        function(t){ return has(t.tradeNo) ? "Trade "+t.tradeNo : null; },
+        ["Trade 1","Trade 2","Trade 3","Trade 4","Trade 5","Trade 6"])+
+      "</div>";
+    return h;
+  }
+
+  function heroChips(v,win,a,dayRec){
+    var c="";
+    if(v==="daily"){
+      if(dayRec&&has(dayRec.dayType)) c+='<span class="chip"><b>'+esc(dayRec.dayType)+"</b></span>";
+      if(dayRec&&has(dayRec.dayChar)) c+='<span class="chip"><b>'+esc(dayRec.dayChar)+"</b></span>";
+      c+='<span class="chip">W/L <b>'+a.wins+"/"+a.losses+"</b></span>";
+      var br=win.list.filter(function(t){ return String(t.ruleBroken||"").toUpperCase().indexOf("Y")===0; }).length;
+      c+= br ? '<span class="chip"><b class="neg">'+br+" rule break"+(br>1?"s":"")+"</b></span>"
+             : '<span class="chip">Rules <b>clean</b></span>';
+      return c;
+    }
+    var cp=cleanPct(win.list);
+    if(cp) c+='<span class="chip">Clean rules <b class="'+(cp.pct>=80?"pos":cp.pct>=60?"":"neg")+'">'+cp.pct.toFixed(0)+"%</b> ("+cp.clean+"/"+win.list.length+")</span>";
+    var ch=modeOf(win.list,"dayChar");
+    if(ch) c+='<span class="chip">Mostly <b>'+esc(ch.name)+"</b> ("+ch.n+" of "+win.list.length+")</span>";
+    var dt=modeOf(win.list,"dayType");
+    if(dt) c+='<span class="chip">Day type <b>'+esc(dt.name)+"</b> ("+dt.n+")</span>";
+    c+='<span class="chip">W/L <b>'+a.wins+"/"+a.losses+"</b></span>";
+    return c;
+  }
+
+  function groupCard(eye,title,field,list){
+    var src=list||state.trades;
+    var map={};
+    src.forEach(function(t){ var k=has(t[field])?String(t[field]):"(blank)"; (map[k]=map[k]||[]).push(t); });
+    var g=Object.keys(map).map(function(k){ var x=agg(map[k]); x.name=k; return x; })
+      .sort(function(p,q){ return q.n-p.n; });
+    var sc=Math.max.apply(null,g.map(function(x){return Math.abs(x.avg);}).concat([1]));
+    var h='<div><div class="eye">'+esc(eye)+"</div><h3>"+esc(title)+'</h3><div class="card">';
+    if(!g.length) h+='<div class="mono dimc">No trades in this window.</div>';
+    g.forEach(function(d){
+      h+='<div class="brow"><div class="blab">'+esc(d.name)+' <span style="opacity:.55">('+d.n+")</span></div>"+
+        bar(d.avg,sc)+'<div class="bval '+cls(d.avg)+'">'+fmt(d.avg)+"</div></div>";
+    });
+    return h+"</div></div>";
+  }
+  /* Like groupCard, but keys are shown in a fixed, meaningful order (e.g. Mon..Sun,
+     Trade 1..Trade N) rather than sorted by frequency. keyFn returns a key or null
+     (null trades are dropped); order lists every key in display order. */
+  function orderedCard(eye,title,list,keyFn,order){
+    var src=list||state.trades;
+    var map={};
+    src.forEach(function(t){ var k=keyFn(t); if(k==null) return; (map[k]=map[k]||[]).push(t); });
+    var g=order.map(function(k){ var x=agg(map[k]||[]); x.name=k; return x; })
+      .filter(function(x){ return x.n>0; });
+    var sc=Math.max.apply(null,g.map(function(x){return Math.abs(x.avg);}).concat([1]));
+    var h='<div><div class="eye">'+esc(eye)+"</div><h3>"+esc(title)+'</h3><div class="card">';
+    if(!g.length) h+='<div class="mono dimc">No trades in this window.</div>';
+    g.forEach(function(d){
+      h+='<div class="brow"><div class="blab">'+esc(d.name)+' <span style="opacity:.55">('+d.n+")</span></div>"+
+        bar(d.avg,sc)+'<div class="bval '+cls(d.avg)+'">'+fmt(d.avg)+"</div></div>";
+    });
+    return h+"</div></div>";
+  }
+
+  function viewPeriods(){
+    if(!state.trades.length) return noData();
+    var m=state.period, P=periods(m);
+    var green=P.filter(function(p){return p.pts>0;}).length;
+    var ns=Math.max.apply(null,P.map(function(p){return Math.abs(p.pts);}).concat([1]));
+    var best=P.slice().sort(function(a,b){return b.pts-a.pts;})[0];
+    var worst=P.slice().sort(function(a,b){return a.pts-b.pts;})[0];
+    var avgP=P.reduce(function(s,p){return s+p.pts;},0)/P.length;
+    var noun=m==="daily"?"days":m==="weekly"?"weeks":"months";
+
+    var h='<section class="sect"><div class="eye">Breakdown</div><h2>By period</h2>'+
+      '<p class="lede">The same trades grouped three ways. Daily is a discipline check — one day of points is noise. Weekly is the honest unit for judging a change to the framework. Monthly is where variance starts washing out.</p>'+
+      '<div class="pills">'+[["daily","Daily"],["weekly","Weekly"],["monthly","Monthly"]].map(function(x){
+        return '<button class="pill" data-on="'+(m===x[0]?1:0)+'" data-act="period" data-mode="'+x[0]+'">'+x[1]+"</button>"; }).join("")+"</div>";
+
+    h+='<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;margin-top:18px;background:var(--panel)">'+
+      hf("Green "+noun,green+" / "+P.length,green*2>=P.length?"pos":"neg")+
+      hf("Avg per "+noun.slice(0,-1),fmt(avgP),cls(avgP))+
+      hf("Best",fmt(best.pts),"pos")+
+      hf("Worst",fmt(worst.pts),cls(worst.pts))+"</div>";
+
+    h+='<div class="scroll"><table><thead><tr><th>'+(m==="daily"?"Day":m==="weekly"?"Week of":"Month")+"</th>"+
+      (m!=="daily"?"<th class='right'>Days</th>":"")+
+      "<th class='right'>Trades</th><th class='right'>W/L</th><th class='right'>Win%</th>"+
+      "<th>Net</th><th class='right'>Points</th><th class='right'>R</th><th class='right'>Avg pts</th>"+
+      "<th class='right'>Best</th><th class='right'>Worst</th><th class='right'>Breaks</th>"+
+      (m==="daily"?"<th>Budget</th>":"")+"</tr></thead><tbody>";
+    P.slice().reverse().forEach(function(p){
+      var over=p.n>3, overL=p.losses>2;
+      h+='<tr><td class="mono" style="white-space:nowrap">'+esc(p.label)+"</td>"+
+        (m!=="daily"?'<td class="mono right">'+p.days+"</td>":"")+
+        '<td class="mono right">'+p.n+"</td>"+
+        '<td class="mono right"><span class="pos">'+p.wins+'</span><span class="dimc">/</span><span class="neg">'+p.losses+"</span></td>"+
+        '<td class="mono right">'+p.wr.toFixed(0)+"%</td>"+
+        '<td style="min-width:110px">'+bar(p.pts,ns)+"</td>"+
+        '<td class="mono right '+cls(p.pts)+'">'+fmt(p.pts)+"</td>"+
+        '<td class="mono right '+cls(p.R)+'">'+fmt(p.R,2)+"</td>"+
+        '<td class="mono right '+cls(p.avg)+'">'+fmt(p.avg)+"</td>"+
+        '<td class="mono right pos">'+fmt(p.best)+"</td>"+
+        '<td class="mono right '+cls(p.worst)+'">'+fmt(p.worst)+"</td>"+
+        '<td class="mono right '+(p.broken?"neg":"dimc")+'">'+p.broken+"</td>"+
+        (m==="daily"?'<td class="mono">'+(over||overL
+          ? '<span class="neg">'+(over?"over count":"")+(over&&overL?" · ":"")+(overL?"over losses":"")+"</span>"
+          : '<span class="dimc">held</span>')+"</td>":"")+"</tr>";
+    });
+    h+="</tbody></table></div>";
+    if(m!=="daily") h+='<p class="lede">A '+(m==="weekly"?"week":"month")+" with fewer than about ten trades tells you more about variance than about the framework.</p>";
+    return h+"</section>";
+  }
+
+  function viewDays(){
+    if(!state.days.length && !state.trades.length) return noData();
+    var h='<section class="sect"><div class="eye">Sessions</div><h2>Day log</h2>'+
+      '<p class="lede">Straight from the Day Log sheet, with the day\'s logged trade result added alongside what the sheet recorded.</p>';
+    if(!state.days.length) return h+'<p class="lede">The workbook had no Day Log sheet.</p></section>';
+
+    var P={}; periods("daily").forEach(function(p){ P[p.key]=p; });
+    state.days.slice().reverse().forEach(function(d){
+      var p=P[d.date];
+      h+='<div class="card"><div style="display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:baseline">'+
+        '<div><h3 style="margin:0">'+esc(new Date(d.date+"T00:00:00").toLocaleDateString(undefined,{weekday:"long",month:"long",day:"numeric"}))+
+        (has(d.dayNo)?' <span class="dimc" style="font-size:13px">· Day '+esc(d.dayNo)+"</span>":"")+"</h3>"+
+        '<div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">'+
+          (has(d.dayType)?'<span class="tag">'+esc(d.dayType)+"</span>":"")+
+          (has(d.dayChar)?'<span class="tag">'+esc(d.dayChar)+"</span>":"")+
+          (has(d.atr)?'<span class="tag">ATR '+n(d.atr).toFixed(2)+"</span>":"")+
+          (has(d.asianPctATR)?'<span class="tag">Asian '+(n(d.asianPctATR)*100).toFixed(0)+"% ATR</span>":"")+
+          '<span class="tag">'+(has(d.tradesTaken)?esc(d.tradesTaken):"0")+" trades</span>"+
+        "</div></div>"+
+        '<div class="mono" style="font-size:24px" class="'+(p?cls(p.pts):"dimc")+'">'+
+          '<span class="'+(p?cls(p.pts):"dimc")+'">'+(p?fmt(p.pts)+" pts":"—")+"</span>"+
+          (p?'<div class="dv-sub" style="text-align:right">'+fmt(p.R,2)+"R</div>":"")+"</div></div>"+
+        (has(d.notes)?'<div class="daynote">'+esc(d.notes)+"</div>":"")+"</div>";
+    });
+    return h+"</section>";
+  }
+
+  function viewTrades(){
+    if(!state.trades.length) return noData();
+    var h='<section class="sect"><div class="eye">Record</div><h2>All trades</h2>'+
+      '<p class="lede">Every row from the Trade Log, newest first. Hover a row to read its notes below.</p>'+
+      '<div class="scroll"><table><thead><tr>'+
+      "<th>Date</th><th class='right'>#</th><th>Session</th><th>Day type</th><th>Character</th><th>Setup</th><th>Dir</th>"+
+      "<th class='right'>RSI</th><th class='right'>Entry</th><th class='right'>SL</th>"+
+      "<th class='right'>B1</th><th class='right'>B2</th><th class='right'>Total</th><th class='right'>R</th><th>Rule</th>"+
+      "</tr></thead><tbody>";
+    sorted().reverse().forEach(function(t){
+      var tot=pts(t), broke=String(t.ruleBroken||"").toUpperCase().indexOf("Y")===0;
+      h+='<tr title="'+esc(String(t.notes||"").slice(0,300))+'">'+
+        '<td class="mono">'+esc(t.date)+"</td>"+
+        '<td class="mono right">'+esc(t.tradeNo)+"</td>"+
+        "<td>"+(has(t.session)?'<span class="tag">'+esc(t.session)+"</span>":'<span class="dimc">—</span>')+"</td>"+
+        '<td style="font-size:12px">'+esc(t.dayType)+"</td>"+
+        '<td style="font-size:12px">'+esc(t.dayChar||"—")+"</td>"+
+        '<td style="font-size:12px">'+esc(t.setup)+"</td>"+
+        '<td style="font-size:12px">'+esc(t.direction)+"</td>"+
+        '<td class="mono right">'+(has(t.rsi)?n(t.rsi).toFixed(0):"—")+"</td>"+
+        '<td class="mono right">'+(has(t.entry1)?n(t.entry1).toFixed(2):"—")+"</td>"+
+        '<td class="mono right">'+(has(t.sl)?n(t.sl).toFixed(2):"—")+"</td>"+
+        '<td class="mono right '+cls(n(t.res1))+'">'+fmt(n(t.res1),2)+"</td>"+
+        '<td class="mono right '+cls(n(t.res2))+'">'+fmt(n(t.res2),2)+"</td>"+
+        '<td class="mono right '+cls(tot)+'">'+fmt(tot,2)+"</td>"+
+        '<td class="mono right '+cls(R(t))+'">'+fmt(R(t),2)+"</td>"+
+        "<td>"+(broke?'<span class="tag bad">broken</span>':'<span class="dimc">—</span>')+"</td></tr>";
+    });
+    return h+"</tbody></table></div></section>";
+  }
+
+  function viewData(){
+    var h='<section class="sect"><div class="eye">Workbook</div><h2>Import and export</h2>'+
+      '<p class="lede">The spreadsheet is the source of truth. Import reads the <b>Trade Log</b> and <b>Day Log</b> sheets by their column headers, so added columns and reordered ones are both fine — only renamed headers would break the match.</p>';
+
+    h+='<div class="drop" id="drop"><h3>Drop your workbook here</h3>'+
+      '<p>XAUUSD_Trading_Journal.xlsx, or any workbook with a Trade Log sheet. Nothing is uploaded anywhere — the file is read inside your browser.</p>'+
+      '<button class="btn" data-act="pick">Choose file</button></div>';
+
+    if(state.imported){
+      h+='<div class="card"><h3 style="margin-top:0">Last import</h3>'+
+        '<div class="mono" style="line-height:2;margin-top:8px">'+
+        esc(state.imported.file)+"<br>"+
+        state.imported.trades+" trades · "+state.imported.days+" day records"+
+        (state.imported.skipped?' · <span class="neg">'+state.imported.skipped+" rows skipped (no valid date)</span>":"")+"<br>"+
+        '<span class="dimc">Sheets seen: '+esc(state.imported.sheets)+"</span><br>"+
+        '<span class="dimc">'+esc(state.imported.when)+"</span></div></div>";
+    }
+
+    h+='<div class="card"><h3 style="margin-top:0">Export</h3>'+
+      '<p class="lede">The Excel export writes a Trade Log sheet with your exact column order, plus the Day Log. It carries data only — your formulas, formatting and the Dashboard and Framework tabs are not reproduced, so treat it as rows to paste into your workbook rather than a replacement for it.</p>'+
+      '<div class="acts l"><button class="btn" data-act="xlsx">Download Excel</button>'+
+      '<button class="btn g" data-act="csv">Download CSV</button>'+
+      '<button class="btn g" data-act="copycsv">Copy CSV text</button></div></div>';
+
+    h+='<div class="card"><h3 style="margin-top:0">Stored copy</h3>'+
+      '<p class="lede">The last import is kept in this browser so the dashboard still loads when you come back. Re-import after each trading day to refresh it. Phone and desktop keep separate copies.</p>';
+    if(state.trades.length){
+      h+= state.confirmClear
+        ? '<div class="acts l"><button class="btn d" data-act="clearyes">Yes, clear it</button><button class="btn g" data-act="clearno">Keep it</button></div>'
+        : '<div class="acts l"><button class="btn d" data-act="clear">Clear stored copy</button></div>';
+    } else h+='<p class="lede dimc">Nothing stored.</p>';
+    h+="</div></section>";
+    return h;
+  }
+
+  /* ---------------- render ---------------- */
+  function render(){
+    document.getElementById("clock").textContent =
+      state.trades.length ? "Beirut UTC+3 · "+state.trades.length+" trades · "+state.days.length+" days"
+                          : "Beirut UTC+3 · no journal loaded";
+    document.getElementById("nav").innerHTML = TABS.map(function(t){
+      return '<button data-tab="'+t[0]+'" data-on="'+(state.tab===t[0]?1:0)+'">'+t[1]+"</button>"; }).join("");
+
+    var b="";
+    if(state.msg) b+='<div class="note '+state.msgKind+'"><span>'+esc(state.msg)+"</span>"+
+      '<button class="link" data-act="dismiss">Dismiss</button></div>';
+    document.getElementById("banners").innerHTML=b;
+
+    document.getElementById("view").innerHTML =
+      state.tab==="home"?viewHome(): state.tab==="periods"?viewPeriods():
+      state.tab==="days"?viewDays(): state.tab==="trades"?viewTrades(): viewData();
+
+    document.getElementById("foot").innerHTML =
+      "Reads your workbook in the browser — nothing is uploaded. Stored copy lives in this browser only.<br>"+
+      "Splits and period tables describe what has already happened. They do not forecast the next trade.";
+
+    requestAnimationFrame(function(){
+      Array.prototype.forEach.call(document.querySelectorAll("[data-w]"),function(el){
+        el.style.width=el.getAttribute("data-w")+"%"; });
+    });
+    wireDrop();
+  }
+
+  function wireDrop(){
+    var d=document.getElementById("drop");
+    if(!d) return;
+    ["dragenter","dragover"].forEach(function(ev){
+      d.addEventListener(ev,function(e){ e.preventDefault(); d.classList.add("over"); }); });
+    ["dragleave","drop"].forEach(function(ev){
+      d.addEventListener(ev,function(e){ e.preventDefault(); d.classList.remove("over"); }); });
+    d.addEventListener("drop",function(e){
+      if(e.dataTransfer&&e.dataTransfer.files&&e.dataTransfer.files[0]) readWorkbook(e.dataTransfer.files[0]);
+    });
+  }
+
+  /* ---------------- events ---------------- */
+  document.getElementById("filepick").addEventListener("change",function(e){
+    if(e.target.files&&e.target.files[0]) readWorkbook(e.target.files[0]);
+    e.target.value="";
+  });
+
+  document.addEventListener("click",function(e){
+   try{
+    var tb=e.target.closest("[data-tab]");
+    if(tb){ state.tab=tb.dataset.tab; state.msg=null; render(); return; }
+    var b=e.target.closest("[data-act]"); if(!b) return;
+    var a=b.dataset.act;
+    if(a==="period"){ state.period=b.dataset.mode; render(); }
+    else if(a==="view"){ state.view=b.dataset.mode; state.offset=0; render(); }
+    else if(a==="older"){ state.offset=state.offset+1; render(); }
+    else if(a==="newer"){ state.offset=Math.max(0,state.offset-1); render(); }
+    else if(a==="pick"){ document.getElementById("filepick").click(); }
+    else if(a==="godata"){ state.tab="data"; render(); }
+    else if(a==="dismiss"){ state.msg=null; render(); }
+    else if(a==="xlsx"){ exportXlsx(); }
+    else if(a==="csv"){ download("XAUUSD_Trade_Log.csv",csvText(),"text/csv"); }
+    else if(a==="copycsv"){ copyText(csvText(),"CSV"); }
+    else if(a==="clear"){ state.confirmClear=true; render(); }
+    else if(a==="clearno"){ state.confirmClear=false; render(); }
+    else if(a==="clearyes"){ state.confirmClear=false; state.trades=[]; state.days=[]; state.imported=null; persist(); }
+   }catch(err){
+     state.msg="Error handling that click: "+(err&&err.message?err.message:err); state.msgKind="bad";
+     try{ render(); }catch(e2){}
+   }
+  });
+
+  window.addEventListener("error",function(ev){
+    state.msg="Script error: "+(ev.message||"unknown"); state.msgKind="bad";
+    try{ render(); }catch(e){}
+  });
+
+  load();
+  if(!state.trades.length) state.tab="data";
+  render();
+})();
+</script>
+</body>
+</html>
