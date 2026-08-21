@@ -324,3 +324,45 @@ tbody tr:hover{background:var(--panel)}
   .readgrid .f:last-child{grid-column:span 2}
   .sgrid{grid-template-columns:1fr}
 }
+
+/* shared by the lighter documentation-style pages (Lab, Indicators) */
+.top{padding:26px 0 0}
+
+/* ---- lab page ----
+   Named lab-sgrid/lab-scard, not sgrid/scard -- the Session Board already
+   uses those for its 2-column suggestion cards; lab.html's symbol grid is
+   3 columns and would collide if it reused the bare names. */
+.lab-sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+@media (max-width:860px){ .lab-sgrid{grid-template-columns:1fr} }
+.lab-scard{background:var(--panel);border:1px solid var(--rule2);border-radius:8px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.lab-scard.active{border-color:rgba(207,155,63,.4)}
+.scard-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sym{font-family:var(--disp);font-weight:800;font-size:20px;letter-spacing:-.01em}
+.tag.live{color:var(--jade);border-color:rgba(127,169,129,.4);background:rgba(127,169,129,.07)}
+.tag.queued{color:var(--faint)}
+.lab-scard p{font-size:13px;color:var(--dim);line-height:1.62}
+.scard-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;padding-top:14px;border-top:1px solid var(--rule2)}
+.mini{font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--brass);
+  border:1px solid rgba(207,155,63,.35);padding:8px 13px;border-radius:100px;text-decoration:none;flex:1;text-align:center}
+.mini:hover{background:rgba(207,155,63,.08)}
+.mini.dim{color:var(--faint);border-color:var(--rule2);pointer-events:none}
+
+.frow{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--rule2)}
+.frow:last-child{border-bottom:none}
+.frow-k{font-family:var(--mono);font-size:11.5px;color:var(--dim)}
+.frow-v{font-family:var(--mono);font-size:12.5px;color:var(--text);text-align:right}
+
+/* ---- indicators page ---- */
+.ind-list{margin-top:26px;border-top:1px solid var(--rule2)}
+.ind-item{padding:22px 0;border-bottom:1px solid var(--rule2);display:flex;gap:18px}
+.ind-item-num{font-family:var(--mono);font-size:11px;color:var(--faint);flex:none;width:20px;padding-top:3px}
+.ind-item-body{flex:1;min-width:0}
+.ind-item-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.ind-item-name{font-family:var(--disp);font-weight:700;font-size:16.5px}
+/* Own tag, not the shared .tag -- indicators.html's badge is always jade
+   ("Live on chart"), unlike the shared .tag's dim/generic default. */
+.ind-tag{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--jade);
+  border:1px solid rgba(127,169,129,.4);padding:3px 9px;border-radius:100px;background:rgba(127,169,129,.07);white-space:nowrap}
+.ind-item-p{font-size:13.5px;color:var(--dim);line-height:1.62;margin-top:7px}
+.ind-item-use{font-family:var(--mono);font-size:11.5px;color:var(--faint);margin-top:9px;line-height:1.6}
+.ind-item-use b{color:var(--brass);font-weight:500}

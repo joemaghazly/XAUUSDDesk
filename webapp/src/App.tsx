@@ -3,7 +3,8 @@ import { AuthProvider } from './auth/AuthProvider';
 import { RequireAuth } from './auth/RequireAuth';
 import { DeskNav } from './components/DeskNav';
 import { Home } from './routes/Home';
-import { Stub } from './routes/Stub';
+import { Lab } from './routes/Lab';
+import { Indicators } from './routes/Indicators';
 import { JournalPage } from './routes/journal/JournalPage';
 import { SessionBoardPage } from './routes/sessionBoard/SessionBoardPage';
 
@@ -13,8 +14,8 @@ function DeskLayout() {
       <DeskNav />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/lab" element={<Stub eye="Symbol frameworks" title="The Lab" note="Coming in a later phase — session windows, indicator settings, entry rules per symbol." />} />
-        <Route path="/indicators" element={<Stub eye="XAUUSD · already built" title="Indicators" note="Coming in a later phase — a written reference for what each chart indicator is for." />} />
+        <Route path="/lab" element={<Lab />} />
+        <Route path="/indicators" element={<Indicators />} />
         <Route path="/journal" element={<JournalPage />} />
         <Route path="/session-board" element={<SessionBoardPage />} />
       </Routes>
