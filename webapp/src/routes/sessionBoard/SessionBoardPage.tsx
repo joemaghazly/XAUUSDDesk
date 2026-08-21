@@ -11,6 +11,7 @@ import { Checklist } from './Checklist';
 import { LiveDataSection } from './LiveDataSection';
 import { Suggestions } from './Suggestions';
 import { RiskCalculator } from './RiskCalculator';
+import { ConfluenceRead } from './ConfluenceRead';
 import { classifyDayType } from './sessionBoardMath';
 
 const SYMBOL = 'XAUUSD';
@@ -40,6 +41,10 @@ export function SessionBoardPage() {
 
       {!loading && !error && day && (
         <>
+          <ConfluenceRead
+            dayType={dayTypeLabel} hasAsianRange={day.asianHigh != null && day.asianLow != null}
+            checks={day.checks} tradesTaken={day.trades} losses={day.losses}
+          />
           <TradingViewChart />
           <AsianPanel day={day} resetKey={resetKey} onPatch={patch} />
           <LiveDataSection onPatch={patch} />
