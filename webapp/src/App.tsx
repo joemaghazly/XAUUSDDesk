@@ -5,6 +5,7 @@ import { DeskNav } from './components/DeskNav';
 import { Home } from './routes/Home';
 import { Stub } from './routes/Stub';
 import { JournalPage } from './routes/journal/JournalPage';
+import { SessionBoardPage } from './routes/sessionBoard/SessionBoardPage';
 
 function DeskLayout() {
   return (
@@ -15,7 +16,7 @@ function DeskLayout() {
         <Route path="/lab" element={<Stub eye="Symbol frameworks" title="The Lab" note="Coming in a later phase — session windows, indicator settings, entry rules per symbol." />} />
         <Route path="/indicators" element={<Stub eye="XAUUSD · already built" title="Indicators" note="Coming in a later phase — a written reference for what each chart indicator is for." />} />
         <Route path="/journal" element={<JournalPage />} />
-        <Route path="/session-board" element={<Stub eye="Live · today" title="Session Board" note="Coming in a later phase — the live session desk." />} />
+        <Route path="/session-board" element={<SessionBoardPage />} />
       </Routes>
     </>
   );

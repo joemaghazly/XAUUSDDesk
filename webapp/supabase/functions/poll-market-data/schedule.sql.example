@@ -1,0 +1,31 @@
+-- Not a migration -- this needs your actual deployed project's function
+-- URL and service role key filled in, so it can't be applied blind the
+-- way the numbered migrations can. Run this once via the SQL editor (or
+-- as your own migration) after `supabase functions deploy poll-market-data`.
+--
+-- Schedules the function every 2 minutes; the function's own internal
+-- loop (see index.ts) covers the 30-60s cadence within each invocation,
+-- so the 2-minute cron just needs to keep re-arming it before its loop
+-- budget runs out.
+
+create extension if not exists pg_cron;
+create extension if not exists pg_net;
+
+select cron.schedule(
+  'poll-market-data',
+  '*/2 * * * *',
+  $$
+  select net.http_post(
+    url := 'https://<your-project-ref>.supabase.co/functions/v1/poll-market-data',
+    headers := jsonb_build_object(
+      'Authorization', 'Bearer <your-service-role-key>',
+      'Content-Type', 'application/json'
+    ),
+    body := '{}'::jsonb
+  );
+  $$
+);
+
+-- To check it's actually running: select * from cron.job_run_details
+-- order by start_time desc limit 10;
+-- To stop it: select cron.unschedule('poll-market-data');
