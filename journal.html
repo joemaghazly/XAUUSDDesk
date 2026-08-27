@@ -14,7 +14,7 @@
 :root{
   --bg:#15130F; --panel:#1E1B16; --raise:#262119; --rule:#3A3229; --rule2:#2C2620;
   --text:#EDE6D6; --dim:#948A78; --faint:#6B6355;
-  --brass:#CF9B3F; --jade:#7FA981; --clay:#C06B54; --steel:#6E8B9B;
+  --azure:#4F8FD1; --jade:#7FA981; --clay:#C06B54;
   --disp:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
   --body:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
@@ -23,7 +23,7 @@
 html{-webkit-text-size-adjust:100%}
 body{background:var(--bg);color:var(--text);font-family:var(--body);min-height:100vh;
   padding-bottom:70px;-webkit-font-smoothing:antialiased;
-  background-image:radial-gradient(1100px 480px at 50% -140px, rgba(207,155,63,.10), transparent 70%)}
+  background-image:radial-gradient(1100px 480px at 50% -140px, rgba(79,143,209,.10), transparent 70%)}
 .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .desknav{background:var(--panel);border-bottom:1px solid var(--rule2)}
@@ -35,9 +35,9 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .desknav-item{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--dim);
   text-decoration:none;padding:7px 12px;border-radius:100px;white-space:nowrap;transition:color .15s,background .15s;flex:none}
 .desknav-item:hover{color:var(--text)}
-.desknav-item[data-here="1"]{color:var(--bg);background:var(--brass);font-weight:600}
+.desknav-item[data-here="1"]{color:var(--bg);background:var(--azure);font-weight:600}
 
-:focus-visible{outline:2px solid var(--brass);outline-offset:3px;border-radius:2px}
+:focus-visible{outline:2px solid var(--azure);outline-offset:3px;border-radius:2px}
 
 .top{padding:26px 0 0}
 .toprow{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
@@ -51,12 +51,12 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   padding:8px 14px;border:1px solid var(--rule2);border-radius:100px;color:var(--dim);white-space:nowrap;
   transition:color .16s,border-color .16s,background .16s}
 .nav button:hover{color:var(--text);border-color:var(--rule)}
-.nav button[data-on="1"]{color:var(--bg);background:var(--brass);border-color:var(--brass);font-weight:500}
+.nav button[data-on="1"]{color:var(--bg);background:var(--azure);border-color:var(--azure);font-weight:500}
 
 .hero{position:relative;margin-top:24px;border:1px solid var(--rule2);border-radius:6px;
   background:linear-gradient(180deg,var(--panel),#191610);overflow:hidden}
 .hero-in{position:relative;z-index:2;padding:26px 26px 0}
-.hero-eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+.hero-eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--azure)}
 .hero-big{font-family:var(--mono);font-weight:500;font-size:clamp(44px,10vw,74px);line-height:.98;
   letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:10px 0 2px}
 .hero-unit{font-family:var(--disp);font-weight:500;font-size:15px;color:var(--dim)}
@@ -80,7 +80,7 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
 .hf-v{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums;margin-top:3px}
 
 .sect{padding:44px 0 0}
-.eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--brass)}
+.eye{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--azure)}
 h2{font-family:var(--disp);font-weight:700;font-size:29px;letter-spacing:-.02em;margin:8px 0 0}
 h3{font-family:var(--disp);font-weight:700;font-size:19px;margin:8px 0 0}
 .lede{font-size:13.5px;color:var(--dim);max-width:66ch;line-height:1.65;margin-top:9px}
@@ -93,7 +93,7 @@ h3{font-family:var(--disp);font-weight:700;font-size:19px;margin:8px 0 0}
 .badge{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:100px;
   border:1px solid var(--rule);color:var(--dim);white-space:nowrap}
 .badge[data-v="lead"]{color:var(--jade);border-color:rgba(127,169,129,.5);background:rgba(127,169,129,.08)}
-.badge[data-v="thin"]{color:var(--brass);border-color:rgba(207,155,63,.45);background:rgba(207,155,63,.07)}
+.badge[data-v="thin"]{color:var(--azure);border-color:rgba(79,143,209,.45);background:rgba(79,143,209,.07)}
 .dv{display:grid;grid-template-columns:1fr 12px 1fr;align-items:center}
 .dv-side{display:flex;align-items:center;gap:11px;min-width:0}
 .dv-side.r{flex-direction:row-reverse}
@@ -141,28 +141,28 @@ tbody tr:hover{background:var(--panel)}
 .pills{display:flex;gap:7px;margin-top:18px;flex-wrap:wrap}
 .pill{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;
   padding:7px 15px;border:1px solid var(--rule2);border-radius:100px;color:var(--dim)}
-.pill[data-on="1"]{color:var(--bg);background:var(--brass);border-color:var(--brass)}
+.pill[data-on="1"]{color:var(--bg);background:var(--azure);border-color:var(--azure)}
 .pill:hover{color:var(--text)} .pill[data-on="1"]:hover{color:var(--bg)}
 
 .drop{border:1.5px dashed var(--rule);border-radius:8px;padding:36px 24px;text-align:center;
   margin-top:18px;background:var(--panel);transition:border-color .2s,background .2s}
-.drop.over{border-color:var(--brass);background:rgba(207,155,63,.07)}
+.drop.over{border-color:var(--azure);background:rgba(79,143,209,.07)}
 .drop h3{margin:0 0 8px}
 .drop p{color:var(--dim);font-size:13.5px;max-width:52ch;margin:0 auto 20px;line-height:1.6}
 
 .acts{display:flex;gap:11px;align-items:center;margin-top:22px;flex-wrap:wrap;justify-content:center}
 .acts.l{justify-content:flex-start}
 .btn{font-family:var(--mono);font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;
-  background:var(--brass);color:#15130F;padding:13px 24px;border-radius:4px;font-weight:600;transition:filter .15s}
+  background:var(--azure);color:#15130F;padding:13px 24px;border-radius:4px;font-weight:600;transition:filter .15s}
 .btn:hover{filter:brightness(1.09)}
 .btn.g{background:none;color:var(--dim);border:1px solid var(--rule);font-weight:400}
 .btn.g:hover{color:var(--text);border-color:var(--dim);filter:none}
 .btn.d{background:none;color:var(--clay);border:1px solid rgba(192,107,84,.45);font-weight:400}
-.link{color:var(--brass);font-family:var(--mono);font-size:12px;text-decoration:underline;padding:0}
+.link{color:var(--azure);font-family:var(--mono);font-size:12px;text-decoration:underline;padding:0}
 .link.warn{color:var(--clay)}
 
 .note{font-family:var(--mono);font-size:11.5px;padding:11px 14px;border-radius:4px;margin-top:16px;
-  border:1px solid rgba(207,155,63,.4);color:var(--brass);background:rgba(207,155,63,.06);
+  border:1px solid rgba(79,143,209,.4);color:var(--azure);background:rgba(79,143,209,.06);
   display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
 .note.bad{border-color:rgba(192,107,84,.45);color:var(--clay);background:rgba(192,107,84,.06)}
 .note.ok{border-color:rgba(127,169,129,.45);color:var(--jade);background:rgba(127,169,129,.06)}
@@ -173,6 +173,73 @@ tbody tr:hover{background:var(--panel)}
 .foot{margin-top:52px;padding-top:20px;border-top:1px solid var(--rule2);
   font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.9}
 .daynote{font-size:13px;color:var(--dim);line-height:1.65;margin-top:10px}
+
+.app-shell{display:flex;align-items:flex-start;max-width:1120px;margin:0 auto;gap:0}
+.app-shell .app-main{flex:1;min-width:0}
+.app-shell .wrap{max-width:none;margin:0;padding:0 22px}
+.sidebar{flex:none;width:186px;padding:26px 14px 26px 0;position:sticky;top:0;align-self:flex-start}
+.side-nav{display:flex;flex-direction:column;gap:2px;margin-top:6px}
+.side-item{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--dim);text-align:left;padding:9px 12px;border-radius:5px;transition:color .15s,background .15s;white-space:nowrap}
+.side-item:hover{color:var(--text);background:var(--panel)}
+.side-item[data-on="1"]{color:var(--bg);background:var(--azure);font-weight:600}
+.side-bottom{margin-top:22px;padding-top:14px;border-top:1px solid var(--rule2);display:flex;flex-direction:column;gap:2px}
+.side-bottom .side-item{color:var(--faint)}
+.crumb{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint);margin-top:4px}
+.crumb b{color:var(--dim);font-weight:500}
+
+.lock-overlay{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;
+  padding:24px;z-index:50;background-image:radial-gradient(1100px 480px at 50% -140px, rgba(79,143,209,.10), transparent 70%)}
+.lock-overlay[hidden]{display:none}
+.lock-card{width:100%;max-width:320px;text-align:center}
+.lock-mark{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--azure);margin-bottom:18px}
+.lock-card h2{font-size:22px}
+.lock-card p{color:var(--dim);font-size:13px;margin-top:8px;line-height:1.6}
+.lock-input{width:100%;margin-top:20px;background:var(--panel);border:1px solid var(--rule2);border-radius:6px;
+  padding:14px;text-align:center;font-family:var(--mono);font-size:20px;letter-spacing:.4em;color:var(--text)}
+.lock-input::placeholder{letter-spacing:.4em}
+.lock-input:focus{outline:2px solid var(--azure);outline-offset:2px;border-color:var(--azure)}
+.lock-err{color:var(--clay);font-family:var(--mono);font-size:11.5px;margin-top:10px}
+.lock-acts{margin-top:18px;display:flex;flex-direction:column;gap:10px;align-items:center}
+
+.edge-wrap{display:flex;gap:32px;flex-wrap:wrap;align-items:center;justify-content:center;padding:6px 0}
+.radar-svg{width:280px;max-width:100%;height:auto;flex:none;overflow:visible}
+.edge-score-box{flex:1 1 180px;max-width:220px;text-align:center}
+.edge-score-num{font-family:var(--mono);font-weight:500;font-size:44px;color:var(--azure);letter-spacing:-.02em}
+.escore-bar{height:8px;border-radius:100px;background:linear-gradient(90deg,var(--clay),var(--jade));position:relative;margin-top:14px}
+.escore-dot{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--text);border:2px solid var(--bg);transform:translate(-50%,-50%)}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-grid.cal-head{margin-bottom:2px}
+.cal-dow{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:center;padding-bottom:4px}
+.cal-cell{aspect-ratio:1;border-radius:4px;border:1px solid var(--rule2);padding:5px 6px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.cal-cell.cal-off{border-color:transparent}
+.cal-d{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.cal-v{font-family:var(--mono);font-size:10px;font-variant-numeric:tabular-nums;align-self:flex-end}
+
+.acc-row{display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:center;margin-top:12px}
+.acc-row:first-child{margin-top:0}
+.acc-input{background:var(--raise);border:1px solid var(--rule2);border-radius:4px;padding:10px 12px;
+  font-family:var(--mono);color:var(--text);font-size:13px;width:100%;max-width:220px}
+.acc-input:focus{outline:2px solid var(--azure);outline-offset:1px;border-color:var(--azure)}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.form-grid .full{grid-column:1/-1}
+.f-field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.f-field input,.f-field select,.f-field textarea{width:100%;background:var(--raise);border:1px solid var(--rule2);border-radius:4px;
+  padding:10px 12px;font-family:var(--body);color:var(--text);font-size:13.5px}
+.f-field input:focus,.f-field select:focus,.f-field textarea:focus{outline:2px solid var(--azure);outline-offset:1px;border-color:var(--azure)}
+.f-field textarea{resize:vertical;min-height:80px;font-family:var(--body)}
+.f-field.chk{display:flex;align-items:center;gap:8px;margin-top:2px}
+.f-field.chk input{width:auto}
+
+.jlist{margin-top:16px;display:flex;flex-direction:column}
+.jcard{padding:16px 4px;border-bottom:1px solid var(--rule2)}
+.jc-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.jc-pts{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums;font-weight:500;min-width:60px}
+.jc-why{font-size:13px;color:var(--dim);line-height:1.6;margin-top:8px;max-width:78ch}
+.jc-why b{color:var(--text);font-weight:500}
+.jc-foot{display:flex;gap:16px;margin-top:10px;justify-content:flex-end}
 
 @media (max-width:860px){
   .grid2{grid-template-columns:1fr;gap:26px}
@@ -186,6 +253,15 @@ tbody tr:hover{background:var(--panel)}
   .dv-side{margin-top:9px}
   .hero-in{padding:22px 20px 0}
   h2{font-size:25px}
+  .app-shell{display:block}
+  .sidebar{position:static;width:auto;padding:0 0 14px;border-bottom:1px solid var(--rule2);margin-bottom:6px}
+  .side-nav{flex-direction:row;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .side-nav::-webkit-scrollbar{display:none}
+  .side-item{flex:none}
+  .side-bottom{flex-direction:row;border-top:none;margin-top:8px;padding-top:0;gap:10px}
+  .form-grid{grid-template-columns:1fr}
+  .acc-row{grid-template-columns:1fr}
+  .edge-wrap{flex-direction:column}
 }
 @media (prefers-reduced-motion:reduce){ .dv-fill,.bfill{transition:none} }
 </style>
@@ -199,19 +275,32 @@ tbody tr:hover{background:var(--panel)}
   <a href="session-board.html" class="desknav-item" data-here="0">Session Board</a>
 </div></div>
 
-<div class="wrap">
-  <header class="top">
-    <div class="toprow">
-      <div class="mark"><span class="ingot"></span>XAU/USD Journal</div>
-      <div class="clock" id="clock">Beirut UTC+3</div>
+<div class="app-shell" id="appShell">
+  <aside class="sidebar">
+    <nav class="side-nav" id="sideNav"></nav>
+    <div class="side-bottom">
+      <button class="side-item" data-act="lock">Lock</button>
+      <button class="side-item" data-act="signout">Sign out</button>
     </div>
-    <nav class="nav" id="nav"></nav>
-  </header>
-  <div id="banners"></div>
-  <main id="view"></main>
-  <div class="foot" id="foot"></div>
+  </aside>
+  <div class="app-main">
+    <div class="wrap">
+      <header class="top">
+        <div class="toprow">
+          <div class="mark"><span class="ingot"></span>XAU/USD Journal</div>
+          <div class="clock" id="clock">Beirut UTC+3</div>
+        </div>
+        <div class="crumb" id="crumb"></div>
+      </header>
+      <div id="banners"></div>
+      <main id="view"></main>
+      <div class="foot" id="foot"></div>
+    </div>
+  </div>
 </div>
+<div class="lock-overlay" id="lockOverlay" hidden></div>
 <input type="file" id="filepick" accept=".xlsx,.xlsm,.xls" style="position:fixed;left:-9999px">
+<input type="file" id="backuppick" accept=".json" style="position:fixed;left:-9999px">
 
 <script>
 (function () {
@@ -220,7 +309,26 @@ tbody tr:hover{background:var(--panel)}
   var SYMBOL = "XAUUSD";
   var KEY = "xauusd-desk:trades:" + SYMBOL;
   var LEGACY_KEYS = ["xauusd-journal-v3", "session-board-history"];
-  var TABS = [["home","Overview"],["periods","Periods"],["days","Day log"],["trades","Trades"],["data","Import / export"]];
+  var PIN_KEY = "xauusd-desk:pin:" + SYMBOL;
+  var PIN_SKIP_KEY = "xauusd-desk:pin-skip:" + SYMBOL;
+  var UNLOCK_KEY = "xauusd-desk:unlocked:" + SYMBOL; // sessionStorage — one unlock per browser tab session
+  var ACC_KEY = "xauusd-desk:account:" + SYMBOL;
+  var REV_KEY = "xauusd-desk:reviews:" + SYMBOL;
+  var PLAYBOOK_KEY = "xauusd-desk:playbook:" + SYMBOL;
+  var CERT_KEY = "xauusd-desk:certificates:" + SYMBOL;
+  var EXP_KEY = "xauusd-desk:expenses:" + SYMBOL;
+  var SESSIONS = ["Asia","London","NY"];
+  var SETUPS = ["Continuation","Reversal","Other"];
+  var DIRECTIONS = ["Long","Short"];
+  var DAY_TYPES = ["Compression","Normal","Stretched","Extended"];
+  var DAY_CHARS = ["Trending Bullish Day","Trending Bearish Day","Choppy Day","Reversal Day"];
+  var EXP_CATS = ["Data feed","Platform / software","Challenge fee","Other"];
+  var NAV_ITEMS = [
+    ["dashboard","Dashboard"], ["accounts","Accounts"], ["addtrade","Add trade"],
+    ["journal","Journal"], ["review","Review"], ["playbook","Playbook"],
+    ["breakdown","Breakdown"], ["certificates","Certificates"], ["expenses","Expenses"],
+    ["data","Import / export"]
+  ];
 
   /* Column order matches the Trade Log sheet exactly, so export round-trips. */
   var SHEET_COLS = [
@@ -240,11 +348,18 @@ tbody tr:hover{background:var(--panel)}
     ["tradesTaken","Trades\nTaken"],["notes","Notes / What Happened"]
   ];
 
-  var state = { trades: [], days: [], tab: "home", period: "daily", view: "daily", offset: 0,
-                msg: null, msgKind: "", imported: null, confirmClear: false };
+  var state = { trades: [], days: [], tab: "dashboard", period: "daily", view: "daily", offset: 0,
+                msg: null, msgKind: "", imported: null, confirmClear: false,
+                pinLocked: false, pinStage: "gate", pinError: "", confirmPinReset: false,
+                breakdownSub: "periods", calOffset: 0, reviewOffset: 0,
+                account: { startingBalance: 0, pointValue: 1 },
+                reviews: {}, playbookNotes: {}, certificates: [], expenses: [],
+                editingId: null, confirmDeleteId: null };
 
   /* ---------------- utils ---------------- */
   function n(v){ var x = typeof v==="number" ? v : parseFloat(v); return isFinite(x) ? x : 0; }
+  /* Non-cryptographic — this is a browser-local convenience lock, not real auth. */
+  function simpleHash(s){ s=String(s); var h=0; for(var i=0;i<s.length;i++){ h=(h*31+s.charCodeAt(i))|0; } return String(h); }
   function has(v){ return v!==null && v!==undefined && v!==""; }
   function fmt(v,d){ d=d===undefined?1:d; return (v>0?"+":"") + v.toLocaleString(undefined,{maximumFractionDigits:d,minimumFractionDigits:d}); }
   function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){
@@ -331,6 +446,28 @@ tbody tr:hover{background:var(--panel)}
     catch(e){ say("Storage is blocked here — the import won't survive a reload.","bad"); }
     render();
   }
+  function loadAccount(){
+    try{
+      var raw=localStorage.getItem(ACC_KEY);
+      if(raw){ var p=JSON.parse(raw);
+        state.account={ startingBalance:n(p.startingBalance), pointValue: has(p.pointValue)?n(p.pointValue):1 };
+      }
+    }catch(e){}
+  }
+  function persistAccount(){
+    try{ localStorage.setItem(ACC_KEY, JSON.stringify(state.account)); }catch(e){}
+  }
+  function loadJSON(key,fallback){
+    try{ var raw=localStorage.getItem(key); if(raw) return JSON.parse(raw); }catch(e){}
+    return fallback;
+  }
+  function saveJSON(key,val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+  function loadExtras(){
+    state.reviews=loadJSON(REV_KEY,{});
+    state.playbookNotes=loadJSON(PLAYBOOK_KEY,{});
+    state.certificates=loadJSON(CERT_KEY,[]);
+    state.expenses=loadJSON(EXP_KEY,[]);
+  }
 
   /* ---------------- xlsx import ---------------- */
   function readWorkbook(file){
@@ -350,7 +487,7 @@ tbody tr:hover{background:var(--panel)}
         state.trades=res.trades; state.days=res.days;
         state.imported={ file:file.name, when:new Date().toLocaleString(), trades:res.trades.length,
                          days:res.days.length, skipped:res.skipped, sheets:wb.SheetNames.join(", ") };
-        state.tab="home";
+        state.tab="dashboard";
         say("Imported "+res.trades.length+" trades and "+res.days.length+" day records from "+file.name+".","ok");
         persist();
       }catch(err){
@@ -460,6 +597,42 @@ tbody tr:hover{background:var(--panel)}
     sorted().forEach(function(t){ rows.push(SHEET_COLS.map(function(c){ return q(t[c[0]]); }).join(",")); });
     return rows.join("\r\n");
   }
+  /* ---------------- JSON backup (round-trips tags/account, unlike the xlsx export) ---------------- */
+  function backupJSON(){
+    var payload={
+      trades: state.trades, days: state.days, account: state.account,
+      reviews: state.reviews, playbookNotes: state.playbookNotes,
+      certificates: state.certificates, expenses: state.expenses,
+      exportedAt: new Date().toISOString()
+    };
+    download("XAUUSD_Journal_backup.json", JSON.stringify(payload,null,2), "application/json");
+  }
+  function readBackup(file){
+    var fr=new FileReader();
+    fr.onerror=function(){ say("Couldn't read that file.","bad"); render(); };
+    fr.onload=function(ev){
+      try{
+        var p=JSON.parse(ev.target.result);
+        if(!Array.isArray(p.trades)) throw new Error("No trades array in that file.");
+        state.trades=p.trades; state.days=Array.isArray(p.days)?p.days:[];
+        if(p.account && typeof p.account==="object"){
+          state.account={ startingBalance:n(p.account.startingBalance), pointValue: has(p.account.pointValue)?n(p.account.pointValue):1 };
+          persistAccount();
+        }
+        state.reviews = (p.reviews && typeof p.reviews==="object") ? p.reviews : {};
+        saveJSON(REV_KEY, state.reviews);
+        state.playbookNotes = (p.playbookNotes && typeof p.playbookNotes==="object") ? p.playbookNotes : {};
+        saveJSON(PLAYBOOK_KEY, state.playbookNotes);
+        state.certificates = Array.isArray(p.certificates) ? p.certificates : [];
+        saveJSON(CERT_KEY, state.certificates);
+        state.expenses = Array.isArray(p.expenses) ? p.expenses : [];
+        saveJSON(EXP_KEY, state.expenses);
+        say("Restored "+state.trades.length+" trades from backup.","ok");
+        persist();
+      }catch(err){ say("Restore failed: "+(err&&err.message?err.message:err),"bad"); render(); }
+    };
+    fr.readAsText(file);
+  }
   function download(name,text,mime){
     try{
       var blob=new Blob([mime.indexOf("csv")>-1?"\uFEFF"+text:text],{type:mime+";charset=utf-8"});
@@ -556,7 +729,7 @@ tbody tr:hover{background:var(--panel)}
       '<polygon points="'+X(0)+','+h+' '+line+' '+X(vals.length-1)+','+h+'" fill="url(#gf)"/>'+
       '<line x1="'+pad+'" x2="'+(w-pad)+'" y1="'+Y(0)+'" y2="'+Y(0)+'" stroke="#3A3229" vector-effect="non-scaling-stroke"/>'+
       '<polyline points="'+line+'" fill="none" stroke="'+stroke+'" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
-      '<circle cx="'+X(vals.length-1)+'" cy="'+Y(vals[vals.length-1])+'" r="3.2" fill="#CF9B3F" vector-effect="non-scaling-stroke"/></svg>';
+      '<circle cx="'+X(vals.length-1)+'" cy="'+Y(vals[vals.length-1])+'" r="3.2" fill="#4F8FD1" vector-effect="non-scaling-stroke"/></svg>';
   }
   function hf(k,v,c){ return '<div class="hf"><div class="hf-k">'+esc(k)+'</div><div class="hf-v '+(c||"")+'">'+esc(v)+"</div></div>"; }
   function dvSide(s,scale,side){
@@ -566,11 +739,397 @@ tbody tr:hover{background:var(--panel)}
       '<div class="dv-v '+cls(s.avg)+'">'+(s.n?fmt(s.avg):"—")+'<div class="dv-sub">'+(s.n?fmt(s.avgR,2)+"R":"")+"</div></div>"+
       '<div class="dv-bar"><div class="dv-fill '+(s.avg>=0?"pos":"neg")+'" data-w="'+pct+'"></div></div></div>';
   }
+
+  /* ---------------- edge score, calendar, balance/drawdown ---------------- */
+  function money(v){
+    var s=Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:2});
+    return (v<0?"-$":"$")+s;
+  }
+  /* Heuristic 0-100 composite over six axes, always the full log (same rule as Performance above) —
+     a summary of shape, not a prediction. Each axis is clamped independently, then averaged. */
+  function edgeScore(){
+    var list=state.trades;
+    var o=agg(list), ps=perfStats(list);
+    var grossWin=list.filter(function(t){return pts(t)>0;}).reduce(function(s,t){return s+pts(t);},0);
+
+    var daily=periods("daily").map(function(p){return p.pts;});
+    var consistency=50;
+    if(daily.length>=2){
+      var mean=daily.reduce(function(s,v){return s+v;},0)/daily.length;
+      var sd=Math.sqrt(daily.reduce(function(s,v){return s+(v-mean)*(v-mean);},0)/daily.length);
+      var scale=daily.reduce(function(s,v){return s+Math.abs(v);},0)/daily.length || 1;
+      consistency=Math.max(0,100-Math.min(100,(sd/scale)*60));
+    }
+    var ddScore = grossWin>0 ? Math.max(0,100*(1-ps.maxDD/grossWin)) : (ps.maxDD>0?0:50);
+    var payoff = (ps.avgWinner!=null && ps.avgLoser) ? ps.avgWinner/Math.abs(ps.avgLoser) : null;
+    var payoffScore = payoff!=null ? Math.min(100,payoff/2.5*100) : 50;
+    var recovery = ps.maxDD>0 ? o.pts/ps.maxDD : (o.pts>0?3:0);
+    var recoveryScore = Math.max(0,Math.min(100,recovery/3*100));
+    var pfScore = ps.pf===Infinity?100 : ps.pf==null?0 : Math.min(100,ps.pf/3*100);
+
+    var axes=[
+      {name:"Win %", score:o.n?o.wr:0},
+      {name:"Profit factor", score:pfScore},
+      {name:"Consistency", score:consistency},
+      {name:"Max drawdown", score:ddScore},
+      {name:"Avg win/loss", score:payoffScore},
+      {name:"Recovery factor", score:recoveryScore}
+    ];
+    var overall=axes.reduce(function(s,a){return s+a.score;},0)/axes.length;
+    return {axes:axes, overall:overall};
+  }
+  function radarChart(axes,size){
+    var cx=size/2, cy=size/2, maxR=size/2-36, N=axes.length;
+    function pt(i,r){ var ang=(-90+i*(360/N))*Math.PI/180; return [cx+r*Math.cos(ang), cy+r*Math.sin(ang)]; }
+    var rings=[0.25,0.5,0.75,1].map(function(f){
+      var pp=[]; for(var i=0;i<N;i++){ var p=pt(i,maxR*f); pp.push(p[0]+","+p[1]); }
+      return '<polygon points="'+pp.join(" ")+'" fill="none" stroke="#3A3229" stroke-width="1" vector-effect="non-scaling-stroke"/>';
+    }).join("");
+    var spokes=axes.map(function(a,i){
+      var p=pt(i,maxR);
+      return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0]+'" y2="'+p[1]+'" stroke="#3A3229" stroke-width="1" vector-effect="non-scaling-stroke"/>';
+    }).join("");
+    var dataPts=axes.map(function(a,i){ var p=pt(i,maxR*Math.max(0,Math.min(100,a.score))/100); return p[0]+","+p[1]; });
+    var labels=axes.map(function(a,i){
+      var p=pt(i,maxR+22);
+      var anchor = Math.abs(p[0]-cx)<4 ? "middle" : (p[0]>cx?"start":"end");
+      return '<text x="'+p[0]+'" y="'+p[1]+'" text-anchor="'+anchor+'" dominant-baseline="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#948A78">'+esc(a.name)+'</text>';
+    }).join("");
+    return '<svg viewBox="0 0 '+size+' '+size+'" class="radar-svg" role="img" aria-label="Edge score radar">'+
+      rings+spokes+
+      '<polygon points="'+dataPts.join(" ")+'" fill="rgba(79,143,209,.22)" stroke="#4F8FD1" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
+      labels+'</svg>';
+  }
+  function edgeScoreSection(){
+    var es=edgeScore();
+    return '<section class="sect"><div class="eye">Composite read</div><h2>Edge score</h2>'+
+      '<p class="lede">A single 0–100 read blending win rate, profit factor, day-to-day consistency, drawdown control, payoff ratio and recovery factor. A heuristic summary of shape, not a forecast — always the full log.</p>'+
+      '<div class="card"><div class="edge-wrap">'+
+      radarChart(es.axes,280)+
+      '<div class="edge-score-box"><div class="edge-score-num">'+es.overall.toFixed(1)+'</div>'+
+      '<div class="escore-bar"><div class="escore-dot" style="left:'+Math.max(2,Math.min(98,es.overall))+'%"></div></div>'+
+      '<div class="dv-sub" style="text-align:center;margin-top:8px">out of 100</div></div>'+
+      '</div></div></section>';
+  }
+  function calendarSection(){
+    var months=windowKeys("monthly");
+    if(!months.length) return "";
+    var idx=Math.min(months.length-1, Math.max(0, months.length-1-state.calOffset));
+    var mk=months[idx];
+    var label=new Date(mk+"-01T00:00:00").toLocaleDateString(undefined,{month:"long",year:"numeric"});
+    var dayMap={};
+    state.trades.forEach(function(t){ if(t.date.slice(0,7)===mk){ dayMap[t.date]=(dayMap[t.date]||0)+pts(t); } });
+    var vals=Object.keys(dayMap).map(function(k){return Math.abs(dayMap[k]);});
+    var maxAbs=vals.length?Math.max.apply(null,vals):1;
+
+    var first=new Date(mk+"-01T00:00:00");
+    var startDow=first.getDay();
+    var daysInMonth=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();
+
+    var cells="";
+    for(var i=0;i<startDow;i++) cells+='<div class="cal-cell cal-off"></div>';
+    for(var d=1; d<=daysInMonth; d++){
+      var ds=mk+"-"+(d<10?"0"+d:d);
+      var has_=Object.prototype.hasOwnProperty.call(dayMap,ds);
+      var v=has_?dayMap[ds]:0;
+      var op=has_?Math.max(.18,Math.min(1,Math.abs(v)/maxAbs)):0;
+      var bg=has_ ? (v>=0?"rgba(127,169,129,"+op+")":"rgba(192,107,84,"+op+")") : "transparent";
+      cells+='<div class="cal-cell'+(has_?"":" cal-off")+'" style="background:'+bg+'" title="'+esc(ds)+(has_?": "+fmt(v)+" pts":"")+'">'+
+        '<div class="cal-d">'+d+'</div>'+(has_?'<div class="cal-v '+cls(v)+'">'+fmt(v)+'</div>':'')+'</div>';
+    }
+    var head=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(x){ return '<div class="cal-dow">'+x+'</div>'; }).join("");
+
+    return '<section class="sect"><div class="eye">Day by day</div><h2>Calendar</h2>'+
+      '<p class="lede">Net points per day this month. Darker means bigger, in either direction.</p>'+
+      '<div class="card">'+
+      '<div class="winnav" style="margin-bottom:14px">'+
+        '<button class="arrow" data-act="calolder" '+(idx<=0?"disabled":"")+'>&#8249;</button>'+
+        '<div class="hero-eye" style="text-align:center">'+esc(label)+'</div>'+
+        '<button class="arrow" data-act="calnewer" '+(idx>=months.length-1?"disabled":"")+'>&#8250;</button>'+
+      '</div>'+
+      '<div class="cal-grid cal-head">'+head+'</div>'+
+      '<div class="cal-grid">'+cells+'</div>'+
+      '</div></section>';
+  }
+  function balanceSection(){
+    var acc=state.account;
+    var P=periods("daily");
+    var run=0, peak=acc.startingBalance;
+    var balSeries=[], ddSeries=[];
+    P.forEach(function(p){
+      run += p.pts*acc.pointValue;
+      var b=acc.startingBalance+run;
+      if(b>peak) peak=b;
+      balSeries.push(b); ddSeries.push(b-peak);
+    });
+    var lastBal=balSeries.length?balSeries[balSeries.length-1]:acc.startingBalance;
+    var lastDD=ddSeries.length?Math.min.apply(null,ddSeries):0;
+    var stroke=lastBal>=acc.startingBalance?"#7FA981":"#C06B54";
+
+    return '<div class="grid2 sect">'+
+      '<div><div class="eye">Equity</div><h3>Account balance</h3><div class="card">'+
+        '<div class="hero-big" style="font-size:30px;text-align:left">'+money(lastBal)+'</div>'+
+        '<div class="hero-unit">starting '+money(acc.startingBalance)+
+          (acc.pointValue!==1?' · $'+acc.pointValue+'/pt':'')+
+          ' — set in <button class="link" data-tab="accounts" style="font-size:inherit">Accounts</button></div>'+
+        (balSeries.length>1?sparkline(balSeries,520,100,stroke):'<p class="lede">Needs at least two trading days to draw a curve.</p>')+
+      '</div></div>'+
+      '<div><div class="eye">Worst case so far</div><h3>Drawdown</h3><div class="card">'+
+        '<div class="hero-big neg" style="font-size:30px;text-align:left">'+money(lastDD)+'</div>'+
+        '<div class="hero-unit">peak-to-trough on the balance curve, running</div>'+
+        (ddSeries.length>1?sparkline(ddSeries,520,100,"#C06B54"):'<p class="lede">Needs at least two trading days to draw a curve.</p>')+
+      '</div></div>'+
+    '</div>';
+  }
+
+  /* ---------------- PIN lock ---------------- */
+  function computeLock(){
+    var stored = localStorage.getItem(PIN_KEY);
+    var skipped = localStorage.getItem(PIN_SKIP_KEY)==="1";
+    var unlockedNow = sessionStorage.getItem(UNLOCK_KEY)==="1";
+    if(unlockedNow){ state.pinLocked=false; return; }
+    if(stored){ state.pinLocked=true; state.pinStage="gate"; }
+    else if(!skipped){ state.pinLocked=true; state.pinStage="setup"; }
+    else { state.pinLocked=false; }
+  }
+  function lockScreenHTML(){
+    if(state.pinStage==="setup"){
+      return '<div class="lock-card"><div class="lock-mark">The Desk &middot; Journal</div>'+
+        '<h2>Set a PIN</h2>'+
+        '<p>Optional. Locks this journal on this device only — it’s a browser-local lock, not a real account, and clearing this browser’s storage bypasses it.</p>'+
+        '<input class="lock-input" id="pinNew" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off">'+
+        '<input class="lock-input" id="pinConfirm" type="password" inputmode="numeric" maxlength="6" placeholder="confirm" autocomplete="off" style="margin-top:10px">'+
+        (state.pinError?'<div class="lock-err">'+esc(state.pinError)+'</div>':'')+
+        '<div class="lock-acts"><button class="btn" data-act="pinsetupsave">Set PIN and lock</button>'+
+        '<button class="link" data-act="pinskip">Skip for now</button></div></div>';
+    }
+    return '<div class="lock-card"><div class="lock-mark">The Desk &middot; Journal</div>'+
+      '<h2>Welcome back</h2><p>Enter your PIN to unlock.</p>'+
+      '<input class="lock-input" id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••" autocomplete="off">'+
+      (state.pinError?'<div class="lock-err">'+esc(state.pinError)+'</div>':'')+
+      '<div class="lock-acts"><button class="btn" data-act="pinunlock">Unlock</button>'+
+      (state.confirmPinReset
+        ? '<button class="link warn" data-act="pinreset">Confirm reset — clears the saved PIN</button>'
+        : '<button class="link" data-act="pinresetask">Forgot PIN? Reset local lock</button>')+
+      '</div></div>';
+  }
+  function wirePinFocus(){
+    var el=document.getElementById(state.pinStage==="setup" ? "pinNew" : "pinInput");
+    if(el) el.focus();
+  }
+
+  function viewReview(){
+    if(!state.trades.length) return noData();
+    var weeks=windowKeys("weekly");
+    var idx=Math.min(weeks.length-1, Math.max(0, weeks.length-1-state.reviewOffset));
+    var wk=weeks[idx];
+    var list=state.trades.filter(function(t){ return mondayOf(t.date)===wk; });
+    var a=agg(list);
+    var byDay={};
+    list.forEach(function(t){ byDay[t.date]=(byDay[t.date]||0)+pts(t); });
+    var dayEntries=Object.keys(byDay).map(function(k){ return {date:k, pts:byDay[k]}; });
+    var bestDay = dayEntries.length ? dayEntries.reduce(function(x,y){ return y.pts>x.pts?y:x; }) : null;
+    var worstDay = dayEntries.length ? dayEntries.reduce(function(x,y){ return y.pts<x.pts?y:x; }) : null;
+    var clean = list.filter(function(t){ return String(t.ruleBroken||"").toUpperCase().indexOf("Y")!==0; }).length;
+    var worstTrade = list.length ? list.reduce(function(x,y){ return pts(y)<pts(x)?y:x; }) : null;
+    var mistakeLabel = null;
+    if(worstTrade && pts(worstTrade)<0){
+      var wtags=Array.isArray(worstTrade.tags)?worstTrade.tags:[];
+      mistakeLabel = wtags.length ? wtags[0] : (has(worstTrade.confluence)?worstTrade.confluence:null);
+    }
+    var s=new Date(wk+"T00:00:00"), e=new Date(s); e.setDate(s.getDate()+6);
+    var label=s.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" – "+e.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+    var rev=state.reviews[wk]||{worked:"",cut:"",focus:""};
+
+    var h='<section class="sect"><div class="eye">Weekly retrospective</div><h2>Review</h2>'+
+      '<p class="lede">One short look back per week: what worked, what to cut, and a single focus for next week — scored against that week\'s actual numbers.</p>';
+
+    h+='<div class="card"><div class="winnav" style="margin-bottom:14px">'+
+      '<button class="arrow" data-act="revolder" '+(idx<=0?"disabled":"")+'>&#8249;</button>'+
+      '<div class="hero-eye" style="text-align:center">Week of '+esc(label)+'</div>'+
+      '<button class="arrow" data-act="revnewer" '+(idx>=weeks.length-1?"disabled":"")+'>&#8250;</button>'+
+      '</div>'+
+      '<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;background:var(--panel)">'+
+        hf("Net P&L", fmt(a.pts), cls(a.pts))+
+        hf("Trades / WR", a.n+" · "+a.wr.toFixed(0)+"%")+
+        hf("Best day", bestDay?fmt(bestDay.pts):"—", bestDay?"pos":"dimc")+
+        hf("Worst day", worstDay?fmt(worstDay.pts):"—", worstDay?cls(worstDay.pts):"dimc")+
+        hf("Plan followed", list.length?clean+"/"+list.length:"—")+
+        hf("Costliest mistake", mistakeLabel?mistakeLabel:(worstTrade&&pts(worstTrade)<0?fmt(pts(worstTrade)):"—"), (mistakeLabel||(worstTrade&&pts(worstTrade)<0))?"neg":"dimc")+
+      '</div></div>';
+
+    h+='<div class="card"><div class="form-grid">'+
+      '<div class="f-field full"><label>What worked — do more of this</label><textarea id="revWorked" placeholder="Setups, sessions, behaviours that made money…">'+esc(rev.worked)+'</textarea></div>'+
+      '<div class="f-field full"><label>What to cut — stop doing this</label><textarea id="revCut" placeholder="Mistakes, leaks, rule breaks…">'+esc(rev.cut)+'</textarea></div>'+
+      '<div class="f-field full"><label>Focus for next week</label><textarea id="revFocus" placeholder="One or two concrete commitments…">'+esc(rev.focus)+'</textarea></div>'+
+      '</div><div class="acts l"><button class="btn" data-act="revsave">Save review</button></div></div>';
+
+    return h+"</section>";
+  }
+  function setupStats(name){
+    var list=state.trades.filter(function(t){ return t.setup===name; });
+    return { list:list, a:agg(list), ps:perfStats(list) };
+  }
+  function viewPlaybook(){
+    var names=SETUPS.slice();
+    state.trades.forEach(function(t){ if(has(t.setup) && names.indexOf(t.setup)===-1) names.push(t.setup); });
+    var h='<section class="sect"><div class="eye">Your models</div><h2>Playbook</h2>'+
+      '<p class="lede">Every setup you\'ve tagged a trade with, backed by its own numbers — plus a place to write down the rules so future-you follows them.</p>';
+    if(!state.trades.length){
+      h+='<div class="empty"><h3>No trades yet</h3><p>Setup stats fill in once you\'ve logged a few trades. You can still write down your rules below.</p></div>';
+    }
+    names.forEach(function(name,i){
+      var st=setupStats(name);
+      var note=state.playbookNotes[name]||"";
+      h+='<div class="card" style="margin-top:16px"><div class="row-head" style="justify-content:space-between">'+
+        '<span class="row-name">'+esc(name)+'</span>'+
+        '<span class="badge">'+st.a.n+' trade'+(st.a.n===1?"":"s")+'</span></div>';
+      if(st.a.n){
+        h+='<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;background:var(--panel);margin-top:6px">'+
+          hf("Win rate", st.a.wr.toFixed(0)+"%")+
+          hf("Avg / trade", fmt(st.a.avg), cls(st.a.avg))+
+          hf("Expectancy (R)", fmt(st.a.avgR,2), cls(st.a.avgR))+
+          hf("Profit factor", st.ps.pf===Infinity?"∞":(st.ps.pf==null?"—":st.ps.pf.toFixed(2)))+
+        '</div>';
+      }
+      h+='<div class="f-field full" style="margin-top:14px"><label>Rules / notes</label>'+
+        '<textarea id="pbNote_'+i+'" placeholder="What defines this setup, entry/exit rules, what to avoid…">'+esc(note)+'</textarea></div>'+
+        '<div class="acts l"><button class="btn g" data-act="pbsave" data-idx="'+i+'" data-name="'+esc(name)+'">Save notes</button></div>'+
+      '</div>';
+    });
+    return h+"</section>";
+  }
+  function viewCertificates(){
+    var h='<section class="sect"><div class="eye">Milestones</div><h2>Certificates</h2>'+
+      '<p class="lede">Funded passes, payouts, and other milestones worth keeping a record of. Stored in this browser only.</p>';
+    h+='<div class="card"><div class="form-grid">'+
+      '<div class="f-field"><label>Date</label><input type="date" id="certDate" value="'+new Date().toISOString().slice(0,10)+'"></div>'+
+      '<div class="f-field"><label>Amount ($, optional)</label><input inputmode="decimal" id="certAmount" placeholder="500"></div>'+
+      '<div class="f-field full"><label>Title</label><input id="certTitle" placeholder="Passed Phase 1 — FundedNext 50K"></div>'+
+      '<div class="f-field full"><label>Note (optional)</label><input id="certNote" placeholder="Any detail worth remembering"></div>'+
+      '</div><div class="acts l"><button class="btn" data-act="certadd">Add milestone</button></div></div>';
+
+    var items=state.certificates.slice().sort(function(a,b){ return a.date<b.date?1:-1; });
+    if(!items.length){
+      h+='<div class="empty"><h3>No milestones yet</h3><p>Add your first pass or payout above.</p></div>';
+    } else {
+      h+='<div class="jlist">';
+      items.forEach(function(c){
+        h+='<div class="jcard"><div class="jc-head">'+
+          (has(c.amount)?'<span class="jc-pts pos">'+money(n(c.amount))+'</span>':'')+
+          '<span class="dimc mono" style="font-size:11.5px">'+esc(c.date)+'</span>'+
+          '<span class="tag">'+esc(c.title)+'</span>'+
+          '<button class="link warn" data-act="certdel" data-cert-id="'+esc(c.id)+'" style="margin-left:auto">Remove</button>'+
+          '</div>'+
+          (has(c.note)?'<div class="jc-why">'+esc(c.note)+'</div>':'')+
+          '</div>';
+      });
+      h+='</div>';
+    }
+    return h+"</section>";
+  }
+  function viewExpenses(){
+    var h='<section class="sect"><div class="eye">Cost of doing business</div><h2>Expenses</h2>'+
+      '<p class="lede">Data fees, platform costs, challenge fees — tracked against what trading actually nets you.</p>';
+
+    h+='<div class="card"><div class="form-grid">'+
+      '<div class="f-field"><label>Date</label><input type="date" id="expDate" value="'+new Date().toISOString().slice(0,10)+'"></div>'+
+      '<div class="f-field"><label>Category</label><select id="expCat">'+EXP_CATS.map(function(c){ return '<option value="'+esc(c)+'">'+esc(c)+'</option>'; }).join('')+'</select></div>'+
+      '<div class="f-field"><label>Amount ($)</label><input inputmode="decimal" id="expAmount" placeholder="49"></div>'+
+      '<div class="f-field full"><label>Note (optional)</label><input id="expNote" placeholder="TradingView Pro, monthly"></div>'+
+      '</div><div class="acts l"><button class="btn" data-act="expadd">Add expense</button></div></div>';
+
+    var total=state.expenses.reduce(function(s,x){ return s+n(x.amount); },0);
+    var netDollars=agg(state.trades).pts*state.account.pointValue;
+    h+='<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;background:var(--panel);margin-top:16px">'+
+      hf("Total expenses", money(total), total>0?"neg":"dimc")+
+      hf("Trading P&L ($)", money(netDollars), netDollars>=0?"pos":"neg")+
+      hf("Net after costs", money(netDollars-total), (netDollars-total)>=0?"pos":"neg")+
+      '</div>';
+
+    var items=state.expenses.slice().sort(function(a,b){ return a.date<b.date?1:-1; });
+    if(!items.length){
+      h+='<div class="empty"><h3>No expenses logged</h3><p>Add your first one above.</p></div>';
+    } else {
+      h+='<div class="jlist">';
+      items.forEach(function(x){
+        h+='<div class="jcard"><div class="jc-head">'+
+          '<span class="jc-pts neg">-$'+Math.abs(n(x.amount)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</span>'+
+          '<span class="dimc mono" style="font-size:11.5px">'+esc(x.date)+'</span>'+
+          '<span class="tag">'+esc(x.category)+'</span>'+
+          '<button class="link warn" data-act="expdel" data-exp-id="'+esc(x.id)+'" style="margin-left:auto">Remove</button>'+
+          '</div>'+
+          (has(x.note)?'<div class="jc-why">'+esc(x.note)+'</div>':'')+
+          '</div>';
+      });
+      h+='</div>';
+    }
+    return h+"</section>";
+  }
+  function viewAccounts(){
+    var acc=state.account;
+    return '<section class="sect"><div class="eye">Settings</div><h2>Accounts</h2>'+
+      '<p class="lede">Sets the starting balance and $-per-point conversion the Dashboard\'s balance and drawdown charts use. Stored in this browser only — there\'s no live broker connection here.</p>'+
+      '<div class="card">'+
+      '<div class="acc-row"><div class="blab">Starting balance ($)</div><input class="acc-input" id="accBal" inputmode="decimal" value="'+esc(acc.startingBalance)+'" placeholder="10000"></div>'+
+      '<div class="acc-row"><div class="blab">$ per point</div><input class="acc-input" id="accPv" inputmode="decimal" value="'+esc(acc.pointValue)+'" placeholder="1"></div>'+
+      '<div class="acts l"><button class="btn" data-act="accsave">Save</button></div>'+
+      '</div></section>';
+  }
+  function viewAddTrade(){
+    var editing = state.editingId ? state.trades.filter(function(t){ return t.id===state.editingId; })[0] : null;
+    var today=new Date().toISOString().slice(0,10);
+    function opts(arr,cur){
+      // If the stored value isn't one of the standard options (older/imported data,
+      // different casing, free text), keep it selectable instead of silently
+      // blanking the field — a blank would get written back and erase it on save.
+      var list = has(cur) && arr.indexOf(cur)===-1 ? arr.concat([cur]) : arr;
+      return '<option value="">—</option>'+list.map(function(x){ return '<option value="'+esc(x)+'"'+(x===cur?" selected":"")+'>'+esc(x)+'</option>'; }).join("");
+    }
+    function iv(v){ return has(v)?esc(v):""; }
+    var tagsStr = editing && Array.isArray(editing.tags) ? editing.tags.join(", ") : "";
+    var ruleChecked = editing && String(editing.ruleBroken||"").toUpperCase().indexOf("Y")===0;
+
+    return '<section class="sect"><div class="eye">'+(editing?"Fix the record":"Log it now")+'</div><h2>'+(editing?"Edit trade":"Add trade")+'</h2>'+
+      '<p class="lede">'+(editing
+        ? "Update this trade — changes land immediately across every dashboard number."
+        : "Quick entry for a single trade — session, setup, result, and your reasoning. It lands in the same log the workbook import fills, so every dashboard number updates immediately.")+'</p>'+
+      '<div class="card"><div class="form-grid">'+
+        '<div class="f-field"><label>Date</label><input type="date" id="atDate" value="'+(editing?esc(editing.date):today)+'"></div>'+
+        '<div class="f-field"><label>Session</label><select id="atSession">'+opts(SESSIONS,editing&&editing.session)+'</select></div>'+
+        '<div class="f-field"><label>Setup</label><select id="atSetup">'+opts(SETUPS,editing&&editing.setup)+'</select></div>'+
+        '<div class="f-field"><label>Direction</label><select id="atDirection">'+opts(DIRECTIONS,editing&&editing.direction)+'</select></div>'+
+        '<div class="f-field"><label>Day type</label><select id="atDayType">'+opts(DAY_TYPES,editing&&editing.dayType)+'</select></div>'+
+        '<div class="f-field"><label>Day character</label><select id="atDayChar">'+opts(DAY_CHARS,editing&&editing.dayChar)+'</select></div>'+
+        '<div class="f-field"><label>Entry</label><input inputmode="decimal" id="atEntry" placeholder="4079.20" value="'+(editing?iv(editing.entry1):"")+'"></div>'+
+        '<div class="f-field"><label>Stop loss</label><input inputmode="decimal" id="atSl" placeholder="4071.00" value="'+(editing?iv(editing.sl):"")+'"></div>'+
+        '<div class="f-field"><label>RSI at entry</label><input inputmode="decimal" id="atRsi" placeholder="62" value="'+(editing?iv(editing.rsi):"")+'"></div>'+
+        '<div class="f-field"><label>Result (points)</label><input inputmode="decimal" id="atPts" placeholder="18.4" value="'+(editing?iv(editing.totalPts):"")+'"></div>'+
+        '<div class="f-field"><label>Result (R)</label><input inputmode="decimal" id="atR" placeholder="1.8" value="'+(editing?iv(editing.resR):"")+'"></div>'+
+        '<div class="f-field chk"><input type="checkbox" id="atRule"'+(ruleChecked?" checked":"")+'><label style="margin:0" for="atRule">Broke my rule on this one</label></div>'+
+        '<div class="f-field full"><label>Setup notes / confluence</label><input id="atConfluence" placeholder="Swept the Asian low, reclaimed the 4H FVG" value="'+(editing?esc(editing.confluence||""):"")+'"></div>'+
+        '<div class="f-field full"><label>Why — reasoning and lessons</label><textarea id="atNotes" placeholder="What you saw, why you took it, what you’d repeat or fix">'+(editing?esc(editing.notes||""):"")+'</textarea></div>'+
+        '<div class="f-field full"><label>Tags (comma separated)</label><input id="atTags" placeholder="Chased, FOMO entry" value="'+esc(tagsStr)+'"></div>'+
+      '</div>'+
+      '<div class="acts l"><button class="btn" data-act="addtrade">'+(editing?"Save changes":"Save trade")+'</button>'+
+      (editing?'<button class="btn g" data-act="tradeeditcancel">Cancel</button>':'')+
+      '</div></div></section>';
+  }
+  function viewBreakdown(){
+    var sub=state.breakdownSub;
+    var h='<div class="pills">'+
+      '<button class="pill" data-on="'+(sub==="periods"?1:0)+'" data-act="breaksub" data-mode="periods">Periods</button>'+
+      '<button class="pill" data-on="'+(sub==="daylog"?1:0)+'" data-act="breaksub" data-mode="daylog">Day log</button>'+
+      '</div>';
+    return h + (sub==="daylog" ? viewDays() : viewPeriods());
+  }
+
   function noData(){
     return '<div class="empty"><h3>No journal loaded</h3>'+
-      '<p>Import your XAUUSD Trading Journal workbook and every tab fills in from the Trade Log and Day Log sheets.</p>'+
+      '<p>Import your XAUUSD Trading Journal workbook, or log trades one at a time — either way, every tab fills in.</p>'+
       '<div class="acts"><button class="btn" data-act="pick">Choose workbook</button>'+
-      '<button class="btn g" data-act="godata">How importing works</button></div></div>';
+      '<button class="btn g" data-act="godata">How importing works</button>'+
+      '<button class="btn g" data-tab="addtrade">Add a trade instead</button></div></div>';
   }
 
   /* ---------------- views ---------------- */
@@ -700,6 +1259,10 @@ tbody tr:hover{background:var(--panel)}
         hf("Best trade", ps.best!=null?fmt(ps.best):"\u2014", ps.best!=null?"pos":"dimc")+
         hf("Worst trade", ps.worst!=null?fmt(ps.worst):"\u2014", cls(ps.worst||0))+
       "</div></section>";
+
+    h+=edgeScoreSection();
+    h+=calendarSection();
+    h+=balanceSection();
 
     h+='<section class="sect"><div class="eye">The open questions</div><h2>What\'s paying</h2>'+
       '<p class="lede">These splits always use the <b>full log</b> — all '+state.trades.length+
@@ -862,7 +1425,7 @@ tbody tr:hover{background:var(--panel)}
           (has(d.asianPctATR)?'<span class="tag">Asian '+(n(d.asianPctATR)*100).toFixed(0)+"% ATR</span>":"")+
           '<span class="tag">'+(has(d.tradesTaken)?esc(d.tradesTaken):"0")+" trades</span>"+
         "</div></div>"+
-        '<div class="mono" style="font-size:24px" class="'+(p?cls(p.pts):"dimc")+'">'+
+        '<div class="mono" style="font-size:24px">'+
           '<span class="'+(p?cls(p.pts):"dimc")+'">'+(p?fmt(p.pts)+" pts":"—")+"</span>"+
           (p?'<div class="dv-sub" style="text-align:right">'+fmt(p.R,2)+"R</div>":"")+"</div></div>"+
         (has(d.notes)?'<div class="daynote">'+esc(d.notes)+"</div>":"")+"</div>";
@@ -872,33 +1435,39 @@ tbody tr:hover{background:var(--panel)}
 
   function viewTrades(){
     if(!state.trades.length) return noData();
-    var h='<section class="sect"><div class="eye">Record</div><h2>All trades</h2>'+
-      '<p class="lede">Every row from the Trade Log, newest first. Hover a row to read its notes below.</p>'+
-      '<div class="scroll"><table><thead><tr>'+
-      "<th>Date</th><th class='right'>#</th><th>Session</th><th>Day type</th><th>Character</th><th>Setup</th><th>Dir</th>"+
-      "<th class='right'>RSI</th><th class='right'>Entry</th><th class='right'>SL</th>"+
-      "<th class='right'>B1</th><th class='right'>B2</th><th class='right'>Total</th><th class='right'>R</th><th>Rule</th>"+
-      "</tr></thead><tbody>";
+    var h='<section class="sect"><div class="eye">Record</div><h2>Journal</h2>'+
+      '<p class="lede">Every trade, newest first, with your reasoning attached. Add new ones from <button class="link" data-tab="addtrade">Add trade</button>.</p>'+
+      '<div class="acts l"><button class="btn g" data-act="csv">Export CSV</button>'+
+      '<button class="btn g" data-act="backupjson">Backup JSON</button>'+
+      '<button class="btn g" data-act="backuppick">Import backup</button></div>';
+
+    h+='<div class="jlist">';
     sorted().reverse().forEach(function(t){
       var tot=pts(t), broke=String(t.ruleBroken||"").toUpperCase().indexOf("Y")===0;
-      h+='<tr title="'+esc(String(t.notes||"").slice(0,300))+'">'+
-        '<td class="mono">'+esc(t.date)+"</td>"+
-        '<td class="mono right">'+esc(t.tradeNo)+"</td>"+
-        "<td>"+(has(t.session)?'<span class="tag">'+esc(t.session)+"</span>":'<span class="dimc">—</span>')+"</td>"+
-        '<td style="font-size:12px">'+esc(t.dayType)+"</td>"+
-        '<td style="font-size:12px">'+esc(t.dayChar||"—")+"</td>"+
-        '<td style="font-size:12px">'+esc(t.setup)+"</td>"+
-        '<td style="font-size:12px">'+esc(t.direction)+"</td>"+
-        '<td class="mono right">'+(has(t.rsi)?n(t.rsi).toFixed(0):"—")+"</td>"+
-        '<td class="mono right">'+(has(t.entry1)?n(t.entry1).toFixed(2):"—")+"</td>"+
-        '<td class="mono right">'+(has(t.sl)?n(t.sl).toFixed(2):"—")+"</td>"+
-        '<td class="mono right '+cls(n(t.res1))+'">'+fmt(n(t.res1),2)+"</td>"+
-        '<td class="mono right '+cls(n(t.res2))+'">'+fmt(n(t.res2),2)+"</td>"+
-        '<td class="mono right '+cls(tot)+'">'+fmt(tot,2)+"</td>"+
-        '<td class="mono right '+cls(R(t))+'">'+fmt(R(t),2)+"</td>"+
-        "<td>"+(broke?'<span class="tag bad">broken</span>':'<span class="dimc">—</span>')+"</td></tr>";
+      var tags=Array.isArray(t.tags)?t.tags:[];
+      h+='<div class="jcard"><div class="jc-head">'+
+        '<span class="jc-pts '+cls(tot)+'">'+fmt(tot,1)+'</span>'+
+        (has(t.resR)?'<span class="tag">'+fmt(n(t.resR),2)+'R</span>':'')+
+        '<span class="dimc mono" style="font-size:11.5px">'+esc(t.date)+'</span>'+
+        (has(t.direction)?'<span class="tag">'+esc(t.direction)+'</span>':'')+
+        (has(t.session)?'<span class="tag">'+esc(t.session)+'</span>':'')+
+        (has(t.setup)?'<span class="tag">'+esc(t.setup)+'</span>':'')+
+        (broke?'<span class="tag bad">rule broken</span>':'')+
+        tags.map(function(tg){ return '<span class="tag">'+esc(tg)+'</span>'; }).join('')+
+        '</div>'+
+        ((has(t.confluence)||has(t.notes)) ? '<div class="jc-why">'+
+          (has(t.confluence)?'<b>'+esc(t.confluence)+'.</b> ':'')+esc(t.notes||"")+'</div>' : '')+
+        '<div class="jc-foot">'+
+          '<button class="link" data-act="tradeedit" data-trade-id="'+esc(t.id)+'">Edit</button>'+
+          (state.confirmDeleteId===t.id
+            ? '<button class="link warn" data-act="tradedelyes" data-trade-id="'+esc(t.id)+'">Confirm delete</button>'+
+              '<button class="link" data-act="tradedelno">Cancel</button>'
+            : '<button class="link warn" data-act="tradedelask" data-trade-id="'+esc(t.id)+'">Delete</button>')+
+        '</div>'+
+        '</div>';
     });
-    return h+"</tbody></table></div></section>";
+    h+='</div></section>';
+    return h;
   }
 
   function viewData(){
@@ -925,6 +1494,11 @@ tbody tr:hover{background:var(--panel)}
       '<button class="btn g" data-act="csv">Download CSV</button>'+
       '<button class="btn g" data-act="copycsv">Copy CSV text</button></div></div>';
 
+    h+='<div class="card"><h3 style="margin-top:0">Full backup (JSON)</h3>'+
+      '<p class="lede">Unlike the Excel/CSV export, this round-trips everything — trades entered by hand, tags, and your Accounts settings — so it\'s the one to use for moving to a new browser or device.</p>'+
+      '<div class="acts l"><button class="btn g" data-act="backupjson">Download backup</button>'+
+      '<button class="btn g" data-act="backuppick">Restore from backup</button></div></div>';
+
     h+='<div class="card"><h3 style="margin-top:0">Stored copy</h3>'+
       '<p class="lede">The last import is kept in this browser so the dashboard still loads when you come back. Re-import after each trading day to refresh it. Phone and desktop keep separate copies.</p>';
     if(state.trades.length){
@@ -938,11 +1512,23 @@ tbody tr:hover{background:var(--panel)}
 
   /* ---------------- render ---------------- */
   function render(){
+    var overlay=document.getElementById("lockOverlay");
+    var shell=document.getElementById("appShell");
+    if(state.pinLocked){
+      shell.style.display="none";
+      overlay.hidden=false; overlay.innerHTML=lockScreenHTML();
+      wirePinFocus();
+      return;
+    }
+    overlay.hidden=true; overlay.innerHTML=""; shell.style.display="";
+
     document.getElementById("clock").textContent =
       state.trades.length ? "Beirut UTC+3 · "+state.trades.length+" trades · "+state.days.length+" days"
                           : "Beirut UTC+3 · no journal loaded";
-    document.getElementById("nav").innerHTML = TABS.map(function(t){
-      return '<button data-tab="'+t[0]+'" data-on="'+(state.tab===t[0]?1:0)+'">'+t[1]+"</button>"; }).join("");
+    document.getElementById("sideNav").innerHTML = NAV_ITEMS.map(function(t){
+      return '<button class="side-item" data-tab="'+t[0]+'" data-on="'+(state.tab===t[0]?1:0)+'">'+t[1]+"</button>"; }).join("");
+    var crumbLabel = (NAV_ITEMS.filter(function(t){ return t[0]===state.tab; })[0] || NAV_ITEMS[0])[1];
+    document.getElementById("crumb").innerHTML = "Journal / <b>"+esc(crumbLabel)+"</b>";
 
     var b="";
     if(state.msg) b+='<div class="note '+state.msgKind+'"><span>'+esc(state.msg)+"</span>"+
@@ -950,8 +1536,16 @@ tbody tr:hover{background:var(--panel)}
     document.getElementById("banners").innerHTML=b;
 
     document.getElementById("view").innerHTML =
-      state.tab==="home"?viewHome(): state.tab==="periods"?viewPeriods():
-      state.tab==="days"?viewDays(): state.tab==="trades"?viewTrades(): viewData();
+      state.tab==="dashboard"?viewHome():
+      state.tab==="breakdown"?viewBreakdown():
+      state.tab==="journal"?viewTrades():
+      state.tab==="data"?viewData():
+      state.tab==="accounts"?viewAccounts():
+      state.tab==="addtrade"?viewAddTrade():
+      state.tab==="review"?viewReview():
+      state.tab==="playbook"?viewPlaybook():
+      state.tab==="certificates"?viewCertificates():
+      viewExpenses();
 
     document.getElementById("foot").innerHTML =
       "Reads your workbook in the browser — nothing is uploaded. Stored copy lives in this browser only.<br>"+
@@ -981,11 +1575,15 @@ tbody tr:hover{background:var(--panel)}
     if(e.target.files&&e.target.files[0]) readWorkbook(e.target.files[0]);
     e.target.value="";
   });
+  document.getElementById("backuppick").addEventListener("change",function(e){
+    if(e.target.files&&e.target.files[0]) readBackup(e.target.files[0]);
+    e.target.value="";
+  });
 
   document.addEventListener("click",function(e){
    try{
     var tb=e.target.closest("[data-tab]");
-    if(tb){ state.tab=tb.dataset.tab; state.msg=null; render(); return; }
+    if(tb){ state.tab=tb.dataset.tab; state.msg=null; state.editingId=null; state.confirmDeleteId=null; render(); return; }
     var b=e.target.closest("[data-act]"); if(!b) return;
     var a=b.dataset.act;
     if(a==="period"){ state.period=b.dataset.mode; render(); }
@@ -1001,10 +1599,189 @@ tbody tr:hover{background:var(--panel)}
     else if(a==="clear"){ state.confirmClear=true; render(); }
     else if(a==="clearno"){ state.confirmClear=false; render(); }
     else if(a==="clearyes"){ state.confirmClear=false; state.trades=[]; state.days=[]; state.imported=null; persist(); }
+    else if(a==="breaksub"){ state.breakdownSub=b.dataset.mode; render(); }
+    else if(a==="calolder"){ state.calOffset=state.calOffset+1; render(); }
+    else if(a==="calnewer"){ state.calOffset=Math.max(0,state.calOffset-1); render(); }
+    else if(a==="accsave"){
+      var accB=parseFloat((document.getElementById("accBal")||{}).value);
+      var accP=parseFloat((document.getElementById("accPv")||{}).value);
+      state.account={ startingBalance: isFinite(accB)?accB:0, pointValue: (isFinite(accP)&&accP!==0)?accP:1 };
+      persistAccount();
+      say("Account settings saved.","ok"); render();
+    }
+    else if(a==="addtrade"){
+      var val=function(id){ var el=document.getElementById(id); return el?el.value:""; };
+      var atDate=val("atDate"), atPtsV=val("atPts");
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(atDate)){ state.msg="Pick a date first."; state.msgKind="bad"; render(); return; }
+      if(!has(atPtsV) || isNaN(parseFloat(atPtsV))){ state.msg="Enter a result in points."; state.msgKind="bad"; render(); return; }
+      var tagsRaw = val("atTags");
+      var tags = tagsRaw ? tagsRaw.split(",").map(function(s){ return s.trim(); }).filter(Boolean) : [];
+      var fields = {
+        date: atDate,
+        session: val("atSession"), setup: val("atSetup"), direction: val("atDirection"),
+        dayType: val("atDayType"), dayChar: val("atDayChar"),
+        rsi: has(val("atRsi"))?n(val("atRsi")):null,
+        entry1: has(val("atEntry"))?n(val("atEntry")):null,
+        sl: has(val("atSl"))?n(val("atSl")):null,
+        totalPts: n(atPtsV), res1: n(atPtsV),
+        resR: has(val("atR"))?n(val("atR")):null,
+        ruleBroken: (document.getElementById("atRule")||{}).checked ? "Y" : "N",
+        confluence: val("atConfluence"), notes: val("atNotes"),
+        tags: tags
+      };
+      // Max existing tradeNo + 1 for that date, excluding the trade itself if editing —
+      // count-based numbering breaks once a same-day trade has been deleted.
+      function nextTradeNo(date,excludeId){
+        var nos = state.trades.filter(function(t){ return t.date===date && t.id!==excludeId; }).map(function(t){ return n(t.tradeNo); });
+        return (nos.length ? Math.max.apply(null,nos) : 0) + 1;
+      }
+      if(state.editingId){
+        var existing = state.trades.filter(function(t){ return t.id===state.editingId; })[0];
+        if(existing){
+          var dateChanged = existing.date!==fields.date;
+          // A quick edit only exposes a single Result field, so on a two-bullet
+          // imported trade (res1+res2 split), leave res1/res2 alone and let
+          // totalPts alone reflect the edited result — overwriting res1 here would
+          // desync res1+res2 from totalPts and corrupt a later xlsx export.
+          var hasBulletSplit = has(existing.res2) && n(existing.res2)!==0;
+          Object.keys(fields).forEach(function(k){
+            if(k==="res1" && hasBulletSplit) return;
+            existing[k]=fields[k];
+          });
+          if(dateChanged) existing.tradeNo = nextTradeNo(fields.date, existing.id);
+        }
+        state.editingId=null;
+        say("Trade updated.","ok");
+      } else {
+        fields.id = "m"+Date.now()+Math.random().toString(36).slice(2,7);
+        fields.tradeNo = nextTradeNo(atDate, null);
+        state.trades.push(fields);
+        say("Trade logged.","ok");
+      }
+      state.tab="journal";
+      persist();
+    }
+    else if(a==="tradeedit"){
+      state.editingId=b.dataset.tradeId; state.confirmDeleteId=null; state.tab="addtrade"; render();
+    }
+    else if(a==="tradeeditcancel"){ state.editingId=null; state.tab="journal"; render(); }
+    else if(a==="tradedelask"){ state.confirmDeleteId=b.dataset.tradeId; render(); }
+    else if(a==="tradedelno"){ state.confirmDeleteId=null; render(); }
+    else if(a==="tradedelyes"){
+      state.trades = state.trades.filter(function(t){ return t.id!==b.dataset.tradeId; });
+      state.confirmDeleteId=null;
+      say("Trade deleted.","ok");
+      persist();
+    }
+    else if(a==="backupjson"){ backupJSON(); }
+    else if(a==="backuppick"){ document.getElementById("backuppick").click(); }
+    else if(a==="revolder"){ state.reviewOffset=state.reviewOffset+1; render(); }
+    else if(a==="revnewer"){ state.reviewOffset=Math.max(0,state.reviewOffset-1); render(); }
+    else if(a==="revsave"){
+      var weeksR=windowKeys("weekly");
+      if(weeksR.length){
+        var idxR=Math.min(weeksR.length-1, Math.max(0, weeksR.length-1-state.reviewOffset));
+        var wkR=weeksR[idxR];
+        state.reviews[wkR]={
+          worked: (document.getElementById("revWorked")||{}).value||"",
+          cut: (document.getElementById("revCut")||{}).value||"",
+          focus: (document.getElementById("revFocus")||{}).value||"",
+          savedAt: new Date().toISOString()
+        };
+        saveJSON(REV_KEY, state.reviews);
+        say("Review saved.","ok");
+      }
+      render();
+    }
+    else if(a==="pbsave"){
+      var pbTa=document.getElementById("pbNote_"+b.dataset.idx);
+      state.playbookNotes[b.dataset.name]=pbTa?pbTa.value:"";
+      saveJSON(PLAYBOOK_KEY, state.playbookNotes);
+      say("Playbook notes saved.","ok"); render();
+    }
+    else if(a==="certadd"){
+      var cDate=(document.getElementById("certDate")||{}).value;
+      var cTitle=(document.getElementById("certTitle")||{}).value;
+      if(!cDate || !cTitle){ state.msg="Add a date and a title."; state.msgKind="bad"; render(); return; }
+      var cAmt=(document.getElementById("certAmount")||{}).value;
+      state.certificates.push({
+        id:"c"+Date.now()+Math.random().toString(36).slice(2,7),
+        date:cDate, title:cTitle,
+        amount: has(cAmt)?n(cAmt):null,
+        note: (document.getElementById("certNote")||{}).value||""
+      });
+      saveJSON(CERT_KEY, state.certificates);
+      say("Milestone added.","ok"); render();
+    }
+    else if(a==="certdel"){
+      state.certificates=state.certificates.filter(function(c){ return c.id!==b.dataset.certId; });
+      saveJSON(CERT_KEY, state.certificates);
+      render();
+    }
+    else if(a==="expadd"){
+      var eDate=(document.getElementById("expDate")||{}).value;
+      var eAmt=(document.getElementById("expAmount")||{}).value;
+      if(!eDate || !has(eAmt) || isNaN(parseFloat(eAmt))){ state.msg="Add a date and an amount."; state.msgKind="bad"; render(); return; }
+      state.expenses.push({
+        id:"e"+Date.now()+Math.random().toString(36).slice(2,7),
+        date:eDate, category:(document.getElementById("expCat")||{}).value||"Other",
+        amount:n(eAmt), note:(document.getElementById("expNote")||{}).value||""
+      });
+      saveJSON(EXP_KEY, state.expenses);
+      say("Expense added.","ok"); render();
+    }
+    else if(a==="expdel"){
+      state.expenses=state.expenses.filter(function(x){ return x.id!==b.dataset.expId; });
+      saveJSON(EXP_KEY, state.expenses);
+      render();
+    }
+    else if(a==="lock" || a==="signout"){
+      sessionStorage.removeItem(UNLOCK_KEY);
+      state.pinError=""; state.confirmPinReset=false;
+      state.pinStage = localStorage.getItem(PIN_KEY) ? "gate" : "setup";
+      state.pinLocked=true; render();
+    }
+    else if(a==="pinresetask"){ state.confirmPinReset=true; render(); }
+    else if(a==="pinreset"){
+      localStorage.removeItem(PIN_KEY);
+      state.confirmPinReset=false; state.pinError=""; state.pinStage="setup"; render();
+    }
+    else if(a==="pinskip"){
+      localStorage.setItem(PIN_SKIP_KEY,"1");
+      sessionStorage.setItem(UNLOCK_KEY,"1");
+      state.pinLocked=false; state.pinError=""; render();
+    }
+    else if(a==="pinsetupsave"){
+      var p1=(document.getElementById("pinNew")||{}).value||"";
+      var p2=(document.getElementById("pinConfirm")||{}).value||"";
+      if(!/^\d{4,6}$/.test(p1)){ state.pinError="PIN must be 4–6 digits."; render(); return; }
+      if(p1!==p2){ state.pinError="PINs don't match."; render(); return; }
+      localStorage.setItem(PIN_KEY, simpleHash(p1));
+      localStorage.removeItem(PIN_SKIP_KEY);
+      sessionStorage.setItem(UNLOCK_KEY,"1");
+      state.pinLocked=false; state.pinError=""; render();
+    }
+    else if(a==="pinunlock"){
+      var pv=(document.getElementById("pinInput")||{}).value||"";
+      if(simpleHash(pv)===localStorage.getItem(PIN_KEY)){
+        sessionStorage.setItem(UNLOCK_KEY,"1");
+        state.pinLocked=false; state.pinError=""; state.confirmPinReset=false; render();
+      } else {
+        state.pinError="Wrong PIN."; render();
+        var el=document.getElementById("pinInput"); if(el) el.focus();
+      }
+    }
    }catch(err){
      state.msg="Error handling that click: "+(err&&err.message?err.message:err); state.msgKind="bad";
      try{ render(); }catch(e2){}
    }
+  });
+
+  document.addEventListener("keydown",function(e){
+    if(e.key!=="Enter") return;
+    var id=e.target && e.target.id;
+    if(id==="pinInput"){ e.preventDefault(); var b1=document.querySelector('[data-act="pinunlock"]'); if(b1) b1.click(); }
+    else if(id==="pinNew" || id==="pinConfirm"){ e.preventDefault(); var b2=document.querySelector('[data-act="pinsetupsave"]'); if(b2) b2.click(); }
   });
 
   window.addEventListener("error",function(ev){
@@ -1013,7 +1790,10 @@ tbody tr:hover{background:var(--panel)}
   });
 
   load();
-  if(!state.trades.length) state.tab="data";
+  loadAccount();
+  loadExtras();
+  computeLock();
+  if(!state.pinLocked && !state.trades.length) state.tab="data";
   render();
 })();
 </script>
