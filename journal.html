@@ -312,11 +312,16 @@ tbody tr:hover{background:var(--panel)}
   var PIN_SKIP_KEY = "xauusd-desk:pin-skip:" + SYMBOL;
   var UNLOCK_KEY = "xauusd-desk:unlocked:" + SYMBOL; // sessionStorage — one unlock per browser tab session
   var ACC_KEY = "xauusd-desk:account:" + SYMBOL;
+  var REV_KEY = "xauusd-desk:reviews:" + SYMBOL;
+  var PLAYBOOK_KEY = "xauusd-desk:playbook:" + SYMBOL;
+  var CERT_KEY = "xauusd-desk:certificates:" + SYMBOL;
+  var EXP_KEY = "xauusd-desk:expenses:" + SYMBOL;
   var SESSIONS = ["Asia","London","NY"];
   var SETUPS = ["Continuation","Reversal","Other"];
   var DIRECTIONS = ["Long","Short"];
   var DAY_TYPES = ["Compression","Normal","Stretched","Extended"];
   var DAY_CHARS = ["Trending Bullish Day","Trending Bearish Day","Choppy Day","Reversal Day"];
+  var EXP_CATS = ["Data feed","Platform / software","Challenge fee","Other"];
   var NAV_ITEMS = [
     ["dashboard","Dashboard"], ["accounts","Accounts"], ["addtrade","Add trade"],
     ["journal","Journal"], ["review","Review"], ["playbook","Playbook"],
@@ -345,8 +350,9 @@ tbody tr:hover{background:var(--panel)}
   var state = { trades: [], days: [], tab: "dashboard", period: "daily", view: "daily", offset: 0,
                 msg: null, msgKind: "", imported: null, confirmClear: false,
                 pinLocked: false, pinStage: "gate", pinError: "", confirmPinReset: false,
-                breakdownSub: "periods", calOffset: 0,
-                account: { startingBalance: 0, pointValue: 1 } };
+                breakdownSub: "periods", calOffset: 0, reviewOffset: 0,
+                account: { startingBalance: 0, pointValue: 1 },
+                reviews: {}, playbookNotes: {}, certificates: [], expenses: [] };
 
   /* ---------------- utils ---------------- */
   function n(v){ var x = typeof v==="number" ? v : parseFloat(v); return isFinite(x) ? x : 0; }
@@ -448,6 +454,17 @@ tbody tr:hover{background:var(--panel)}
   }
   function persistAccount(){
     try{ localStorage.setItem(ACC_KEY, JSON.stringify(state.account)); }catch(e){}
+  }
+  function loadJSON(key,fallback){
+    try{ var raw=localStorage.getItem(key); if(raw) return JSON.parse(raw); }catch(e){}
+    return fallback;
+  }
+  function saveJSON(key,val){ try{ localStorage.setItem(key, JSON.stringify(val)); }catch(e){} }
+  function loadExtras(){
+    state.reviews=loadJSON(REV_KEY,{});
+    state.playbookNotes=loadJSON(PLAYBOOK_KEY,{});
+    state.certificates=loadJSON(CERT_KEY,[]);
+    state.expenses=loadJSON(EXP_KEY,[]);
   }
 
   /* ---------------- xlsx import ---------------- */
@@ -886,9 +903,153 @@ tbody tr:hover{background:var(--panel)}
     if(el) el.focus();
   }
 
-  function viewStub(title,desc){
-    return '<section class="sect"><div class="eye">Coming next</div><h2>'+esc(title)+'</h2>'+
-      '<div class="empty"><h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p></div></section>';
+  function viewReview(){
+    if(!state.trades.length) return noData();
+    var weeks=windowKeys("weekly");
+    var idx=Math.min(weeks.length-1, Math.max(0, weeks.length-1-state.reviewOffset));
+    var wk=weeks[idx];
+    var list=state.trades.filter(function(t){ return mondayOf(t.date)===wk; });
+    var a=agg(list);
+    var byDay={};
+    list.forEach(function(t){ byDay[t.date]=(byDay[t.date]||0)+pts(t); });
+    var dayEntries=Object.keys(byDay).map(function(k){ return {date:k, pts:byDay[k]}; });
+    var bestDay = dayEntries.length ? dayEntries.reduce(function(x,y){ return y.pts>x.pts?y:x; }) : null;
+    var worstDay = dayEntries.length ? dayEntries.reduce(function(x,y){ return y.pts<x.pts?y:x; }) : null;
+    var clean = list.filter(function(t){ return String(t.ruleBroken||"").toUpperCase().indexOf("Y")!==0; }).length;
+    var worstTrade = list.length ? list.reduce(function(x,y){ return pts(y)<pts(x)?y:x; }) : null;
+    var mistakeLabel = null;
+    if(worstTrade && pts(worstTrade)<0){
+      var wtags=Array.isArray(worstTrade.tags)?worstTrade.tags:[];
+      mistakeLabel = wtags.length ? wtags[0] : (has(worstTrade.confluence)?worstTrade.confluence:null);
+    }
+    var s=new Date(wk+"T00:00:00"), e=new Date(s); e.setDate(s.getDate()+6);
+    var label=s.toLocaleDateString(undefined,{month:"short",day:"numeric"})+" – "+e.toLocaleDateString(undefined,{month:"short",day:"numeric"});
+    var rev=state.reviews[wk]||{worked:"",cut:"",focus:""};
+
+    var h='<section class="sect"><div class="eye">Weekly retrospective</div><h2>Review</h2>'+
+      '<p class="lede">One short look back per week: what worked, what to cut, and a single focus for next week — scored against that week\'s actual numbers.</p>';
+
+    h+='<div class="card"><div class="winnav" style="margin-bottom:14px">'+
+      '<button class="arrow" data-act="revolder" '+(idx<=0?"disabled":"")+'>&#8249;</button>'+
+      '<div class="hero-eye" style="text-align:center">Week of '+esc(label)+'</div>'+
+      '<button class="arrow" data-act="revnewer" '+(idx>=weeks.length-1?"disabled":"")+'>&#8250;</button>'+
+      '</div>'+
+      '<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;background:var(--panel)">'+
+        hf("Net P&L", fmt(a.pts), cls(a.pts))+
+        hf("Trades / WR", a.n+" · "+a.wr.toFixed(0)+"%")+
+        hf("Best day", bestDay?fmt(bestDay.pts):"—", bestDay?"pos":"dimc")+
+        hf("Worst day", worstDay?fmt(worstDay.pts):"—", worstDay?cls(worstDay.pts):"dimc")+
+        hf("Plan followed", list.length?clean+"/"+list.length:"—")+
+        hf("Costliest mistake", mistakeLabel?mistakeLabel:(worstTrade&&pts(worstTrade)<0?fmt(pts(worstTrade)):"—"), (mistakeLabel||(worstTrade&&pts(worstTrade)<0))?"neg":"dimc")+
+      '</div></div>';
+
+    h+='<div class="card"><div class="form-grid">'+
+      '<div class="f-field full"><label>What worked — do more of this</label><textarea id="revWorked" placeholder="Setups, sessions, behaviours that made money…">'+esc(rev.worked)+'</textarea></div>'+
+      '<div class="f-field full"><label>What to cut — stop doing this</label><textarea id="revCut" placeholder="Mistakes, leaks, rule breaks…">'+esc(rev.cut)+'</textarea></div>'+
+      '<div class="f-field full"><label>Focus for next week</label><textarea id="revFocus" placeholder="One or two concrete commitments…">'+esc(rev.focus)+'</textarea></div>'+
+      '</div><div class="acts l"><button class="btn" data-act="revsave">Save review</button></div></div>';
+
+    return h+"</section>";
+  }
+  function setupStats(name){
+    var list=state.trades.filter(function(t){ return t.setup===name; });
+    return { list:list, a:agg(list), ps:perfStats(list) };
+  }
+  function viewPlaybook(){
+    var names=SETUPS.slice();
+    state.trades.forEach(function(t){ if(has(t.setup) && names.indexOf(t.setup)===-1) names.push(t.setup); });
+    var h='<section class="sect"><div class="eye">Your models</div><h2>Playbook</h2>'+
+      '<p class="lede">Every setup you\'ve tagged a trade with, backed by its own numbers — plus a place to write down the rules so future-you follows them.</p>';
+    if(!state.trades.length){
+      h+='<div class="empty"><h3>No trades yet</h3><p>Setup stats fill in once you\'ve logged a few trades. You can still write down your rules below.</p></div>';
+    }
+    names.forEach(function(name,i){
+      var st=setupStats(name);
+      var note=state.playbookNotes[name]||"";
+      h+='<div class="card" style="margin-top:16px"><div class="row-head" style="justify-content:space-between">'+
+        '<span class="row-name">'+esc(name)+'</span>'+
+        '<span class="badge">'+st.a.n+' trade'+(st.a.n===1?"":"s")+'</span></div>';
+      if(st.a.n){
+        h+='<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;background:var(--panel);margin-top:6px">'+
+          hf("Win rate", st.a.wr.toFixed(0)+"%")+
+          hf("Avg / trade", fmt(st.a.avg), cls(st.a.avg))+
+          hf("Expectancy (R)", fmt(st.a.avgR,2), cls(st.a.avgR))+
+          hf("Profit factor", st.ps.pf===Infinity?"∞":(st.ps.pf==null?"—":st.ps.pf.toFixed(2)))+
+        '</div>';
+      }
+      h+='<div class="f-field full" style="margin-top:14px"><label>Rules / notes</label>'+
+        '<textarea id="pbNote_'+i+'" placeholder="What defines this setup, entry/exit rules, what to avoid…">'+esc(note)+'</textarea></div>'+
+        '<div class="acts l"><button class="btn g" data-act="pbsave" data-idx="'+i+'" data-name="'+esc(name)+'">Save notes</button></div>'+
+      '</div>';
+    });
+    return h+"</section>";
+  }
+  function viewCertificates(){
+    var h='<section class="sect"><div class="eye">Milestones</div><h2>Certificates</h2>'+
+      '<p class="lede">Funded passes, payouts, and other milestones worth keeping a record of. Stored in this browser only.</p>';
+    h+='<div class="card"><div class="form-grid">'+
+      '<div class="f-field"><label>Date</label><input type="date" id="certDate" value="'+new Date().toISOString().slice(0,10)+'"></div>'+
+      '<div class="f-field"><label>Amount ($, optional)</label><input inputmode="decimal" id="certAmount" placeholder="500"></div>'+
+      '<div class="f-field full"><label>Title</label><input id="certTitle" placeholder="Passed Phase 1 — FundedNext 50K"></div>'+
+      '<div class="f-field full"><label>Note (optional)</label><input id="certNote" placeholder="Any detail worth remembering"></div>'+
+      '</div><div class="acts l"><button class="btn" data-act="certadd">Add milestone</button></div></div>';
+
+    var items=state.certificates.slice().sort(function(a,b){ return a.date<b.date?1:-1; });
+    if(!items.length){
+      h+='<div class="empty"><h3>No milestones yet</h3><p>Add your first pass or payout above.</p></div>';
+    } else {
+      h+='<div class="jlist">';
+      items.forEach(function(c){
+        h+='<div class="jcard"><div class="jc-head">'+
+          (has(c.amount)?'<span class="jc-pts pos">'+money(n(c.amount))+'</span>':'')+
+          '<span class="dimc mono" style="font-size:11.5px">'+esc(c.date)+'</span>'+
+          '<span class="tag">'+esc(c.title)+'</span>'+
+          '<button class="link warn" data-act="certdel" data-cert-id="'+esc(c.id)+'" style="margin-left:auto">Remove</button>'+
+          '</div>'+
+          (has(c.note)?'<div class="jc-why">'+esc(c.note)+'</div>':'')+
+          '</div>';
+      });
+      h+='</div>';
+    }
+    return h+"</section>";
+  }
+  function viewExpenses(){
+    var h='<section class="sect"><div class="eye">Cost of doing business</div><h2>Expenses</h2>'+
+      '<p class="lede">Data fees, platform costs, challenge fees — tracked against what trading actually nets you.</p>';
+
+    h+='<div class="card"><div class="form-grid">'+
+      '<div class="f-field"><label>Date</label><input type="date" id="expDate" value="'+new Date().toISOString().slice(0,10)+'"></div>'+
+      '<div class="f-field"><label>Category</label><select id="expCat">'+EXP_CATS.map(function(c){ return '<option value="'+esc(c)+'">'+esc(c)+'</option>'; }).join('')+'</select></div>'+
+      '<div class="f-field"><label>Amount ($)</label><input inputmode="decimal" id="expAmount" placeholder="49"></div>'+
+      '<div class="f-field full"><label>Note (optional)</label><input id="expNote" placeholder="TradingView Pro, monthly"></div>'+
+      '</div><div class="acts l"><button class="btn" data-act="expadd">Add expense</button></div></div>';
+
+    var total=state.expenses.reduce(function(s,x){ return s+n(x.amount); },0);
+    var netDollars=agg(state.trades).pts*state.account.pointValue;
+    h+='<div class="hero-foot" style="border:1px solid var(--rule2);border-radius:6px;background:var(--panel);margin-top:16px">'+
+      hf("Total expenses", money(total), total>0?"neg":"dimc")+
+      hf("Trading P&L ($)", money(netDollars), netDollars>=0?"pos":"neg")+
+      hf("Net after costs", money(netDollars-total), (netDollars-total)>=0?"pos":"neg")+
+      '</div>';
+
+    var items=state.expenses.slice().sort(function(a,b){ return a.date<b.date?1:-1; });
+    if(!items.length){
+      h+='<div class="empty"><h3>No expenses logged</h3><p>Add your first one above.</p></div>';
+    } else {
+      h+='<div class="jlist">';
+      items.forEach(function(x){
+        h+='<div class="jcard"><div class="jc-head">'+
+          '<span class="jc-pts neg">-$'+Math.abs(n(x.amount)).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+'</span>'+
+          '<span class="dimc mono" style="font-size:11.5px">'+esc(x.date)+'</span>'+
+          '<span class="tag">'+esc(x.category)+'</span>'+
+          '<button class="link warn" data-act="expdel" data-exp-id="'+esc(x.id)+'" style="margin-left:auto">Remove</button>'+
+          '</div>'+
+          (has(x.note)?'<div class="jc-why">'+esc(x.note)+'</div>':'')+
+          '</div>';
+      });
+      h+='</div>';
+    }
+    return h+"</section>";
   }
   function viewAccounts(){
     var acc=state.account;
@@ -1345,10 +1506,10 @@ tbody tr:hover{background:var(--panel)}
       state.tab==="data"?viewData():
       state.tab==="accounts"?viewAccounts():
       state.tab==="addtrade"?viewAddTrade():
-      state.tab==="review"?viewStub("Review","Weekly retrospective: what worked, what to cut, and your focus for next week, scored against the week's numbers."):
-      state.tab==="playbook"?viewStub("Playbook","Your catalogued setups and models, each with its own win rate and expectancy."):
-      state.tab==="certificates"?viewStub("Certificates","Funded account pass certificates and payout milestones."):
-      viewStub("Expenses","Data fees, platform costs, prop-firm challenge fees — tracked against what trading actually nets you.");
+      state.tab==="review"?viewReview():
+      state.tab==="playbook"?viewPlaybook():
+      state.tab==="certificates"?viewCertificates():
+      viewExpenses();
 
     document.getElementById("foot").innerHTML =
       "Reads your workbook in the browser — nothing is uploaded. Stored copy lives in this browser only.<br>"+
@@ -1440,6 +1601,66 @@ tbody tr:hover{background:var(--panel)}
     }
     else if(a==="backupjson"){ backupJSON(); }
     else if(a==="backuppick"){ document.getElementById("backuppick").click(); }
+    else if(a==="revolder"){ state.reviewOffset=state.reviewOffset+1; render(); }
+    else if(a==="revnewer"){ state.reviewOffset=Math.max(0,state.reviewOffset-1); render(); }
+    else if(a==="revsave"){
+      var weeksR=windowKeys("weekly");
+      if(weeksR.length){
+        var idxR=Math.min(weeksR.length-1, Math.max(0, weeksR.length-1-state.reviewOffset));
+        var wkR=weeksR[idxR];
+        state.reviews[wkR]={
+          worked: (document.getElementById("revWorked")||{}).value||"",
+          cut: (document.getElementById("revCut")||{}).value||"",
+          focus: (document.getElementById("revFocus")||{}).value||"",
+          savedAt: new Date().toISOString()
+        };
+        saveJSON(REV_KEY, state.reviews);
+        say("Review saved.","ok");
+      }
+      render();
+    }
+    else if(a==="pbsave"){
+      var pbTa=document.getElementById("pbNote_"+b.dataset.idx);
+      state.playbookNotes[b.dataset.name]=pbTa?pbTa.value:"";
+      saveJSON(PLAYBOOK_KEY, state.playbookNotes);
+      say("Playbook notes saved.","ok"); render();
+    }
+    else if(a==="certadd"){
+      var cDate=(document.getElementById("certDate")||{}).value;
+      var cTitle=(document.getElementById("certTitle")||{}).value;
+      if(!cDate || !cTitle){ state.msg="Add a date and a title."; state.msgKind="bad"; render(); return; }
+      var cAmt=(document.getElementById("certAmount")||{}).value;
+      state.certificates.push({
+        id:"c"+Date.now()+Math.random().toString(36).slice(2,7),
+        date:cDate, title:cTitle,
+        amount: has(cAmt)?n(cAmt):null,
+        note: (document.getElementById("certNote")||{}).value||""
+      });
+      saveJSON(CERT_KEY, state.certificates);
+      say("Milestone added.","ok"); render();
+    }
+    else if(a==="certdel"){
+      state.certificates=state.certificates.filter(function(c){ return c.id!==b.dataset.certId; });
+      saveJSON(CERT_KEY, state.certificates);
+      render();
+    }
+    else if(a==="expadd"){
+      var eDate=(document.getElementById("expDate")||{}).value;
+      var eAmt=(document.getElementById("expAmount")||{}).value;
+      if(!eDate || !has(eAmt) || isNaN(parseFloat(eAmt))){ state.msg="Add a date and an amount."; state.msgKind="bad"; render(); return; }
+      state.expenses.push({
+        id:"e"+Date.now()+Math.random().toString(36).slice(2,7),
+        date:eDate, category:(document.getElementById("expCat")||{}).value||"Other",
+        amount:n(eAmt), note:(document.getElementById("expNote")||{}).value||""
+      });
+      saveJSON(EXP_KEY, state.expenses);
+      say("Expense added.","ok"); render();
+    }
+    else if(a==="expdel"){
+      state.expenses=state.expenses.filter(function(x){ return x.id!==b.dataset.expId; });
+      saveJSON(EXP_KEY, state.expenses);
+      render();
+    }
     else if(a==="lock" || a==="signout"){
       sessionStorage.removeItem(UNLOCK_KEY);
       state.pinError=""; state.confirmPinReset=false;
@@ -1496,6 +1717,7 @@ tbody tr:hover{background:var(--panel)}
 
   load();
   loadAccount();
+  loadExtras();
   computeLock();
   if(!state.pinLocked && !state.trades.length) state.tab="data";
   render();
