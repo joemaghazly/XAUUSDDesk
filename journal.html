@@ -239,6 +239,7 @@ tbody tr:hover{background:var(--panel)}
 .jc-pts{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums;font-weight:500;min-width:60px}
 .jc-why{font-size:13px;color:var(--dim);line-height:1.6;margin-top:8px;max-width:78ch}
 .jc-why b{color:var(--text);font-weight:500}
+.jc-foot{display:flex;gap:16px;margin-top:10px;justify-content:flex-end}
 
 @media (max-width:860px){
   .grid2{grid-template-columns:1fr;gap:26px}
@@ -352,7 +353,8 @@ tbody tr:hover{background:var(--panel)}
                 pinLocked: false, pinStage: "gate", pinError: "", confirmPinReset: false,
                 breakdownSub: "periods", calOffset: 0, reviewOffset: 0,
                 account: { startingBalance: 0, pointValue: 1 },
-                reviews: {}, playbookNotes: {}, certificates: [], expenses: [] };
+                reviews: {}, playbookNotes: {}, certificates: [], expenses: [],
+                editingId: null, confirmDeleteId: null };
 
   /* ---------------- utils ---------------- */
   function n(v){ var x = typeof v==="number" ? v : parseFloat(v); return isFinite(x) ? x : 0; }
@@ -1062,29 +1064,37 @@ tbody tr:hover{background:var(--panel)}
       '</div></section>';
   }
   function viewAddTrade(){
+    var editing = state.editingId ? state.trades.filter(function(t){ return t.id===state.editingId; })[0] : null;
     var today=new Date().toISOString().slice(0,10);
-    function opts(arr){ return '<option value="">—</option>'+arr.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join(""); }
-    return '<section class="sect"><div class="eye">Log it now</div><h2>Add trade</h2>'+
-      '<p class="lede">Quick entry for a single trade — session, setup, result, and your reasoning. It lands in the same log the workbook import fills, so every dashboard number updates immediately.</p>'+
+    function opts(arr,cur){ return '<option value="">—</option>'+arr.map(function(x){ return '<option value="'+esc(x)+'"'+(x===cur?" selected":"")+'>'+esc(x)+'</option>'; }).join(""); }
+    function iv(v){ return has(v)?esc(v):""; }
+    var tagsStr = editing && Array.isArray(editing.tags) ? editing.tags.join(", ") : "";
+    var ruleChecked = editing && String(editing.ruleBroken||"").toUpperCase().indexOf("Y")===0;
+
+    return '<section class="sect"><div class="eye">'+(editing?"Fix the record":"Log it now")+'</div><h2>'+(editing?"Edit trade":"Add trade")+'</h2>'+
+      '<p class="lede">'+(editing
+        ? "Update this trade — changes land immediately across every dashboard number."
+        : "Quick entry for a single trade — session, setup, result, and your reasoning. It lands in the same log the workbook import fills, so every dashboard number updates immediately.")+'</p>'+
       '<div class="card"><div class="form-grid">'+
-        '<div class="f-field"><label>Date</label><input type="date" id="atDate" value="'+today+'"></div>'+
-        '<div class="f-field"><label>Session</label><select id="atSession">'+opts(SESSIONS)+'</select></div>'+
-        '<div class="f-field"><label>Setup</label><select id="atSetup">'+opts(SETUPS)+'</select></div>'+
-        '<div class="f-field"><label>Direction</label><select id="atDirection">'+opts(DIRECTIONS)+'</select></div>'+
-        '<div class="f-field"><label>Day type</label><select id="atDayType">'+opts(DAY_TYPES)+'</select></div>'+
-        '<div class="f-field"><label>Day character</label><select id="atDayChar">'+opts(DAY_CHARS)+'</select></div>'+
-        '<div class="f-field"><label>Entry</label><input inputmode="decimal" id="atEntry" placeholder="4079.20"></div>'+
-        '<div class="f-field"><label>Stop loss</label><input inputmode="decimal" id="atSl" placeholder="4071.00"></div>'+
-        '<div class="f-field"><label>RSI at entry</label><input inputmode="decimal" id="atRsi" placeholder="62"></div>'+
-        '<div class="f-field"><label>Result (points)</label><input inputmode="decimal" id="atPts" placeholder="18.4"></div>'+
-        '<div class="f-field"><label>Result (R)</label><input inputmode="decimal" id="atR" placeholder="1.8"></div>'+
-        '<div class="f-field chk"><input type="checkbox" id="atRule"><label style="margin:0" for="atRule">Broke my rule on this one</label></div>'+
-        '<div class="f-field full"><label>Setup notes / confluence</label><input id="atConfluence" placeholder="Swept the Asian low, reclaimed the 4H FVG"></div>'+
-        '<div class="f-field full"><label>Why — reasoning and lessons</label><textarea id="atNotes" placeholder="What you saw, why you took it, what you’d repeat or fix"></textarea></div>'+
-        '<div class="f-field full"><label>Tags (comma separated)</label><input id="atTags" placeholder="Chased, FOMO entry"></div>'+
+        '<div class="f-field"><label>Date</label><input type="date" id="atDate" value="'+(editing?esc(editing.date):today)+'"></div>'+
+        '<div class="f-field"><label>Session</label><select id="atSession">'+opts(SESSIONS,editing&&editing.session)+'</select></div>'+
+        '<div class="f-field"><label>Setup</label><select id="atSetup">'+opts(SETUPS,editing&&editing.setup)+'</select></div>'+
+        '<div class="f-field"><label>Direction</label><select id="atDirection">'+opts(DIRECTIONS,editing&&editing.direction)+'</select></div>'+
+        '<div class="f-field"><label>Day type</label><select id="atDayType">'+opts(DAY_TYPES,editing&&editing.dayType)+'</select></div>'+
+        '<div class="f-field"><label>Day character</label><select id="atDayChar">'+opts(DAY_CHARS,editing&&editing.dayChar)+'</select></div>'+
+        '<div class="f-field"><label>Entry</label><input inputmode="decimal" id="atEntry" placeholder="4079.20" value="'+(editing?iv(editing.entry1):"")+'"></div>'+
+        '<div class="f-field"><label>Stop loss</label><input inputmode="decimal" id="atSl" placeholder="4071.00" value="'+(editing?iv(editing.sl):"")+'"></div>'+
+        '<div class="f-field"><label>RSI at entry</label><input inputmode="decimal" id="atRsi" placeholder="62" value="'+(editing?iv(editing.rsi):"")+'"></div>'+
+        '<div class="f-field"><label>Result (points)</label><input inputmode="decimal" id="atPts" placeholder="18.4" value="'+(editing?iv(editing.totalPts):"")+'"></div>'+
+        '<div class="f-field"><label>Result (R)</label><input inputmode="decimal" id="atR" placeholder="1.8" value="'+(editing?iv(editing.resR):"")+'"></div>'+
+        '<div class="f-field chk"><input type="checkbox" id="atRule"'+(ruleChecked?" checked":"")+'><label style="margin:0" for="atRule">Broke my rule on this one</label></div>'+
+        '<div class="f-field full"><label>Setup notes / confluence</label><input id="atConfluence" placeholder="Swept the Asian low, reclaimed the 4H FVG" value="'+(editing?esc(editing.confluence||""):"")+'"></div>'+
+        '<div class="f-field full"><label>Why — reasoning and lessons</label><textarea id="atNotes" placeholder="What you saw, why you took it, what you’d repeat or fix">'+(editing?esc(editing.notes||""):"")+'</textarea></div>'+
+        '<div class="f-field full"><label>Tags (comma separated)</label><input id="atTags" placeholder="Chased, FOMO entry" value="'+esc(tagsStr)+'"></div>'+
       '</div>'+
-      '<div class="acts l"><button class="btn" data-act="addtrade">Save trade</button></div>'+
-      '</div></section>';
+      '<div class="acts l"><button class="btn" data-act="addtrade">'+(editing?"Save changes":"Save trade")+'</button>'+
+      (editing?'<button class="btn g" data-act="tradeeditcancel">Cancel</button>':'')+
+      '</div></div></section>';
   }
   function viewBreakdown(){
     var sub=state.breakdownSub;
@@ -1428,6 +1438,13 @@ tbody tr:hover{background:var(--panel)}
         '</div>'+
         ((has(t.confluence)||has(t.notes)) ? '<div class="jc-why">'+
           (has(t.confluence)?'<b>'+esc(t.confluence)+'.</b> ':'')+esc(t.notes||"")+'</div>' : '')+
+        '<div class="jc-foot">'+
+          '<button class="link" data-act="tradeedit" data-trade-id="'+esc(t.id)+'">Edit</button>'+
+          (state.confirmDeleteId===t.id
+            ? '<button class="link warn" data-act="tradedelyes" data-trade-id="'+esc(t.id)+'">Confirm delete</button>'+
+              '<button class="link" data-act="tradedelno">Cancel</button>'
+            : '<button class="link warn" data-act="tradedelask" data-trade-id="'+esc(t.id)+'">Delete</button>')+
+        '</div>'+
         '</div>';
     });
     h+='</div></section>';
@@ -1547,7 +1564,7 @@ tbody tr:hover{background:var(--panel)}
   document.addEventListener("click",function(e){
    try{
     var tb=e.target.closest("[data-tab]");
-    if(tb){ state.tab=tb.dataset.tab; state.msg=null; render(); return; }
+    if(tb){ state.tab=tb.dataset.tab; state.msg=null; state.editingId=null; state.confirmDeleteId=null; render(); return; }
     var b=e.target.closest("[data-act]"); if(!b) return;
     var a=b.dataset.act;
     if(a==="period"){ state.period=b.dataset.mode; render(); }
@@ -1578,12 +1595,10 @@ tbody tr:hover{background:var(--panel)}
       var atDate=val("atDate"), atPtsV=val("atPts");
       if(!/^\d{4}-\d{2}-\d{2}$/.test(atDate)){ state.msg="Pick a date first."; state.msgKind="bad"; render(); return; }
       if(!has(atPtsV) || isNaN(parseFloat(atPtsV))){ state.msg="Enter a result in points."; state.msgKind="bad"; render(); return; }
-      var tradeNo = state.trades.filter(function(t){ return t.date===atDate; }).length + 1;
       var tagsRaw = val("atTags");
       var tags = tagsRaw ? tagsRaw.split(",").map(function(s){ return s.trim(); }).filter(Boolean) : [];
-      state.trades.push({
-        id: "m"+Date.now()+Math.random().toString(36).slice(2,7),
-        date: atDate, tradeNo: tradeNo,
+      var fields = {
+        date: atDate,
         session: val("atSession"), setup: val("atSetup"), direction: val("atDirection"),
         dayType: val("atDayType"), dayChar: val("atDayChar"),
         rsi: has(val("atRsi"))?n(val("atRsi")):null,
@@ -1594,9 +1609,31 @@ tbody tr:hover{background:var(--panel)}
         ruleBroken: (document.getElementById("atRule")||{}).checked ? "Y" : "N",
         confluence: val("atConfluence"), notes: val("atNotes"),
         tags: tags
-      });
+      };
+      if(state.editingId){
+        var existing = state.trades.filter(function(t){ return t.id===state.editingId; })[0];
+        if(existing) Object.keys(fields).forEach(function(k){ existing[k]=fields[k]; });
+        state.editingId=null;
+        say("Trade updated.","ok");
+      } else {
+        fields.id = "m"+Date.now()+Math.random().toString(36).slice(2,7);
+        fields.tradeNo = state.trades.filter(function(t){ return t.date===atDate; }).length + 1;
+        state.trades.push(fields);
+        say("Trade logged.","ok");
+      }
       state.tab="journal";
-      say("Trade logged.","ok");
+      persist();
+    }
+    else if(a==="tradeedit"){
+      state.editingId=b.dataset.tradeId; state.confirmDeleteId=null; state.tab="addtrade"; render();
+    }
+    else if(a==="tradeeditcancel"){ state.editingId=null; state.tab="journal"; render(); }
+    else if(a==="tradedelask"){ state.confirmDeleteId=b.dataset.tradeId; render(); }
+    else if(a==="tradedelno"){ state.confirmDeleteId=null; render(); }
+    else if(a==="tradedelyes"){
+      state.trades = state.trades.filter(function(t){ return t.id!==b.dataset.tradeId; });
+      state.confirmDeleteId=null;
+      say("Trade deleted.","ok");
       persist();
     }
     else if(a==="backupjson"){ backupJSON(); }
