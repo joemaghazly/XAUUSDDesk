@@ -599,7 +599,12 @@ tbody tr:hover{background:var(--panel)}
   }
   /* ---------------- JSON backup (round-trips tags/account, unlike the xlsx export) ---------------- */
   function backupJSON(){
-    var payload={ trades: state.trades, days: state.days, account: state.account, exportedAt: new Date().toISOString() };
+    var payload={
+      trades: state.trades, days: state.days, account: state.account,
+      reviews: state.reviews, playbookNotes: state.playbookNotes,
+      certificates: state.certificates, expenses: state.expenses,
+      exportedAt: new Date().toISOString()
+    };
     download("XAUUSD_Journal_backup.json", JSON.stringify(payload,null,2), "application/json");
   }
   function readBackup(file){
@@ -614,6 +619,14 @@ tbody tr:hover{background:var(--panel)}
           state.account={ startingBalance:n(p.account.startingBalance), pointValue: has(p.account.pointValue)?n(p.account.pointValue):1 };
           persistAccount();
         }
+        state.reviews = (p.reviews && typeof p.reviews==="object") ? p.reviews : {};
+        saveJSON(REV_KEY, state.reviews);
+        state.playbookNotes = (p.playbookNotes && typeof p.playbookNotes==="object") ? p.playbookNotes : {};
+        saveJSON(PLAYBOOK_KEY, state.playbookNotes);
+        state.certificates = Array.isArray(p.certificates) ? p.certificates : [];
+        saveJSON(CERT_KEY, state.certificates);
+        state.expenses = Array.isArray(p.expenses) ? p.expenses : [];
+        saveJSON(EXP_KEY, state.expenses);
         say("Restored "+state.trades.length+" trades from backup.","ok");
         persist();
       }catch(err){ say("Restore failed: "+(err&&err.message?err.message:err),"bad"); render(); }
@@ -1412,7 +1425,7 @@ tbody tr:hover{background:var(--panel)}
           (has(d.asianPctATR)?'<span class="tag">Asian '+(n(d.asianPctATR)*100).toFixed(0)+"% ATR</span>":"")+
           '<span class="tag">'+(has(d.tradesTaken)?esc(d.tradesTaken):"0")+" trades</span>"+
         "</div></div>"+
-        '<div class="mono" style="font-size:24px" class="'+(p?cls(p.pts):"dimc")+'">'+
+        '<div class="mono" style="font-size:24px">'+
           '<span class="'+(p?cls(p.pts):"dimc")+'">'+(p?fmt(p.pts)+" pts":"—")+"</span>"+
           (p?'<div class="dv-sub" style="text-align:right">'+fmt(p.R,2)+"R</div>":"")+"</div></div>"+
         (has(d.notes)?'<div class="daynote">'+esc(d.notes)+"</div>":"")+"</div>";
@@ -1616,17 +1629,32 @@ tbody tr:hover{background:var(--panel)}
         confluence: val("atConfluence"), notes: val("atNotes"),
         tags: tags
       };
+      // Max existing tradeNo + 1 for that date, excluding the trade itself if editing —
+      // count-based numbering breaks once a same-day trade has been deleted.
+      function nextTradeNo(date,excludeId){
+        var nos = state.trades.filter(function(t){ return t.date===date && t.id!==excludeId; }).map(function(t){ return n(t.tradeNo); });
+        return (nos.length ? Math.max.apply(null,nos) : 0) + 1;
+      }
       if(state.editingId){
         var existing = state.trades.filter(function(t){ return t.id===state.editingId; })[0];
-        if(existing) Object.keys(fields).forEach(function(k){ existing[k]=fields[k]; });
+        if(existing){
+          var dateChanged = existing.date!==fields.date;
+          // A quick edit only exposes a single Result field, so on a two-bullet
+          // imported trade (res1+res2 split), leave res1/res2 alone and let
+          // totalPts alone reflect the edited result — overwriting res1 here would
+          // desync res1+res2 from totalPts and corrupt a later xlsx export.
+          var hasBulletSplit = has(existing.res2) && n(existing.res2)!==0;
+          Object.keys(fields).forEach(function(k){
+            if(k==="res1" && hasBulletSplit) return;
+            existing[k]=fields[k];
+          });
+          if(dateChanged) existing.tradeNo = nextTradeNo(fields.date, existing.id);
+        }
         state.editingId=null;
         say("Trade updated.","ok");
       } else {
         fields.id = "m"+Date.now()+Math.random().toString(36).slice(2,7);
-        // Max existing + 1, not count + 1 — count breaks once a same-day trade has
-        // been deleted, since a fresh add would then collide with a surviving tradeNo.
-        var sameDayNos = state.trades.filter(function(t){ return t.date===atDate; }).map(function(t){ return n(t.tradeNo); });
-        fields.tradeNo = (sameDayNos.length ? Math.max.apply(null,sameDayNos) : 0) + 1;
+        fields.tradeNo = nextTradeNo(atDate, null);
         state.trades.push(fields);
         say("Trade logged.","ok");
       }
