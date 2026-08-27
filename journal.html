@@ -202,6 +202,44 @@ tbody tr:hover{background:var(--panel)}
 .lock-err{color:var(--clay);font-family:var(--mono);font-size:11.5px;margin-top:10px}
 .lock-acts{margin-top:18px;display:flex;flex-direction:column;gap:10px;align-items:center}
 
+.edge-wrap{display:flex;gap:32px;flex-wrap:wrap;align-items:center;justify-content:center;padding:6px 0}
+.radar-svg{width:280px;max-width:100%;height:auto;flex:none;overflow:visible}
+.edge-score-box{flex:1 1 180px;max-width:220px;text-align:center}
+.edge-score-num{font-family:var(--mono);font-weight:500;font-size:44px;color:var(--brass);letter-spacing:-.02em}
+.escore-bar{height:8px;border-radius:100px;background:linear-gradient(90deg,var(--clay),var(--brass),var(--jade));position:relative;margin-top:14px}
+.escore-dot{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;background:var(--text);border:2px solid var(--bg);transform:translate(-50%,-50%)}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.cal-grid.cal-head{margin-bottom:2px}
+.cal-dow{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);text-align:center;padding-bottom:4px}
+.cal-cell{aspect-ratio:1;border-radius:4px;border:1px solid var(--rule2);padding:5px 6px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.cal-cell.cal-off{border-color:transparent}
+.cal-d{font-family:var(--mono);font-size:10px;color:var(--faint)}
+.cal-v{font-family:var(--mono);font-size:10px;font-variant-numeric:tabular-nums;align-self:flex-end}
+
+.acc-row{display:grid;grid-template-columns:160px 1fr;gap:12px;align-items:center;margin-top:12px}
+.acc-row:first-child{margin-top:0}
+.acc-input{background:var(--raise);border:1px solid var(--rule2);border-radius:4px;padding:10px 12px;
+  font-family:var(--mono);color:var(--text);font-size:13px;width:100%;max-width:220px}
+.acc-input:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass)}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px 18px}
+.form-grid .full{grid-column:1/-1}
+.f-field label{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);margin-bottom:6px}
+.f-field input,.f-field select,.f-field textarea{width:100%;background:var(--raise);border:1px solid var(--rule2);border-radius:4px;
+  padding:10px 12px;font-family:var(--body);color:var(--text);font-size:13.5px}
+.f-field input:focus,.f-field select:focus,.f-field textarea:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass)}
+.f-field textarea{resize:vertical;min-height:80px;font-family:var(--body)}
+.f-field.chk{display:flex;align-items:center;gap:8px;margin-top:2px}
+.f-field.chk input{width:auto}
+
+.jlist{margin-top:16px;display:flex;flex-direction:column}
+.jcard{padding:16px 4px;border-bottom:1px solid var(--rule2)}
+.jc-head{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.jc-pts{font-family:var(--mono);font-size:17px;font-variant-numeric:tabular-nums;font-weight:500;min-width:60px}
+.jc-why{font-size:13px;color:var(--dim);line-height:1.6;margin-top:8px;max-width:78ch}
+.jc-why b{color:var(--text);font-weight:500}
+
 @media (max-width:860px){
   .grid2{grid-template-columns:1fr;gap:26px}
   .dv{grid-template-columns:1fr}
@@ -220,6 +258,9 @@ tbody tr:hover{background:var(--panel)}
   .side-nav::-webkit-scrollbar{display:none}
   .side-item{flex:none}
   .side-bottom{flex-direction:row;border-top:none;margin-top:8px;padding-top:0;gap:10px}
+  .form-grid{grid-template-columns:1fr}
+  .acc-row{grid-template-columns:1fr}
+  .edge-wrap{flex-direction:column}
 }
 @media (prefers-reduced-motion:reduce){ .dv-fill,.bfill{transition:none} }
 </style>
@@ -258,6 +299,7 @@ tbody tr:hover{background:var(--panel)}
 </div>
 <div class="lock-overlay" id="lockOverlay" hidden></div>
 <input type="file" id="filepick" accept=".xlsx,.xlsm,.xls" style="position:fixed;left:-9999px">
+<input type="file" id="backuppick" accept=".json" style="position:fixed;left:-9999px">
 
 <script>
 (function () {
@@ -269,6 +311,12 @@ tbody tr:hover{background:var(--panel)}
   var PIN_KEY = "xauusd-desk:pin:" + SYMBOL;
   var PIN_SKIP_KEY = "xauusd-desk:pin-skip:" + SYMBOL;
   var UNLOCK_KEY = "xauusd-desk:unlocked:" + SYMBOL; // sessionStorage — one unlock per browser tab session
+  var ACC_KEY = "xauusd-desk:account:" + SYMBOL;
+  var SESSIONS = ["Asia","London","NY"];
+  var SETUPS = ["Continuation","Reversal","Other"];
+  var DIRECTIONS = ["Long","Short"];
+  var DAY_TYPES = ["Compression","Normal","Stretched","Extended"];
+  var DAY_CHARS = ["Trending Bullish Day","Trending Bearish Day","Choppy Day","Reversal Day"];
   var NAV_ITEMS = [
     ["dashboard","Dashboard"], ["accounts","Accounts"], ["addtrade","Add trade"],
     ["journal","Journal"], ["review","Review"], ["playbook","Playbook"],
@@ -297,7 +345,8 @@ tbody tr:hover{background:var(--panel)}
   var state = { trades: [], days: [], tab: "dashboard", period: "daily", view: "daily", offset: 0,
                 msg: null, msgKind: "", imported: null, confirmClear: false,
                 pinLocked: false, pinStage: "gate", pinError: "", confirmPinReset: false,
-                breakdownSub: "periods" };
+                breakdownSub: "periods", calOffset: 0,
+                account: { startingBalance: 0, pointValue: 1 } };
 
   /* ---------------- utils ---------------- */
   function n(v){ var x = typeof v==="number" ? v : parseFloat(v); return isFinite(x) ? x : 0; }
@@ -388,6 +437,17 @@ tbody tr:hover{background:var(--panel)}
     try{ localStorage.setItem(KEY, JSON.stringify({trades:state.trades, days:state.days})); }
     catch(e){ say("Storage is blocked here — the import won't survive a reload.","bad"); }
     render();
+  }
+  function loadAccount(){
+    try{
+      var raw=localStorage.getItem(ACC_KEY);
+      if(raw){ var p=JSON.parse(raw);
+        state.account={ startingBalance:n(p.startingBalance), pointValue: has(p.pointValue)?n(p.pointValue):1 };
+      }
+    }catch(e){}
+  }
+  function persistAccount(){
+    try{ localStorage.setItem(ACC_KEY, JSON.stringify(state.account)); }catch(e){}
   }
 
   /* ---------------- xlsx import ---------------- */
@@ -518,6 +578,29 @@ tbody tr:hover{background:var(--panel)}
     sorted().forEach(function(t){ rows.push(SHEET_COLS.map(function(c){ return q(t[c[0]]); }).join(",")); });
     return rows.join("\r\n");
   }
+  /* ---------------- JSON backup (round-trips tags/account, unlike the xlsx export) ---------------- */
+  function backupJSON(){
+    var payload={ trades: state.trades, days: state.days, account: state.account, exportedAt: new Date().toISOString() };
+    download("XAUUSD_Journal_backup.json", JSON.stringify(payload,null,2), "application/json");
+  }
+  function readBackup(file){
+    var fr=new FileReader();
+    fr.onerror=function(){ say("Couldn't read that file.","bad"); render(); };
+    fr.onload=function(ev){
+      try{
+        var p=JSON.parse(ev.target.result);
+        if(!Array.isArray(p.trades)) throw new Error("No trades array in that file.");
+        state.trades=p.trades; state.days=Array.isArray(p.days)?p.days:[];
+        if(p.account && typeof p.account==="object"){
+          state.account={ startingBalance:n(p.account.startingBalance), pointValue: has(p.account.pointValue)?n(p.account.pointValue):1 };
+          persistAccount();
+        }
+        say("Restored "+state.trades.length+" trades from backup.","ok");
+        persist();
+      }catch(err){ say("Restore failed: "+(err&&err.message?err.message:err),"bad"); render(); }
+    };
+    fr.readAsText(file);
+  }
   function download(name,text,mime){
     try{
       var blob=new Blob([mime.indexOf("csv")>-1?"\uFEFF"+text:text],{type:mime+";charset=utf-8"});
@@ -624,6 +707,149 @@ tbody tr:hover{background:var(--panel)}
       '<div class="dv-v '+cls(s.avg)+'">'+(s.n?fmt(s.avg):"—")+'<div class="dv-sub">'+(s.n?fmt(s.avgR,2)+"R":"")+"</div></div>"+
       '<div class="dv-bar"><div class="dv-fill '+(s.avg>=0?"pos":"neg")+'" data-w="'+pct+'"></div></div></div>';
   }
+
+  /* ---------------- edge score, calendar, balance/drawdown ---------------- */
+  function money(v){
+    var s=Math.abs(v).toLocaleString(undefined,{maximumFractionDigits:2,minimumFractionDigits:2});
+    return (v<0?"-$":"$")+s;
+  }
+  /* Heuristic 0-100 composite over six axes, always the full log (same rule as Performance above) —
+     a summary of shape, not a prediction. Each axis is clamped independently, then averaged. */
+  function edgeScore(){
+    var list=state.trades;
+    var o=agg(list), ps=perfStats(list);
+    var grossWin=list.filter(function(t){return pts(t)>0;}).reduce(function(s,t){return s+pts(t);},0);
+
+    var daily=periods("daily").map(function(p){return p.pts;});
+    var consistency=50;
+    if(daily.length>=2){
+      var mean=daily.reduce(function(s,v){return s+v;},0)/daily.length;
+      var sd=Math.sqrt(daily.reduce(function(s,v){return s+(v-mean)*(v-mean);},0)/daily.length);
+      var scale=daily.reduce(function(s,v){return s+Math.abs(v);},0)/daily.length || 1;
+      consistency=Math.max(0,100-Math.min(100,(sd/scale)*60));
+    }
+    var ddScore = grossWin>0 ? Math.max(0,100*(1-ps.maxDD/grossWin)) : (ps.maxDD>0?0:50);
+    var payoff = (ps.avgWinner!=null && ps.avgLoser) ? ps.avgWinner/Math.abs(ps.avgLoser) : null;
+    var payoffScore = payoff!=null ? Math.min(100,payoff/2.5*100) : 50;
+    var recovery = ps.maxDD>0 ? o.pts/ps.maxDD : (o.pts>0?3:0);
+    var recoveryScore = Math.max(0,Math.min(100,recovery/3*100));
+    var pfScore = ps.pf===Infinity?100 : ps.pf==null?0 : Math.min(100,ps.pf/3*100);
+
+    var axes=[
+      {name:"Win %", score:o.n?o.wr:0},
+      {name:"Profit factor", score:pfScore},
+      {name:"Consistency", score:consistency},
+      {name:"Max drawdown", score:ddScore},
+      {name:"Avg win/loss", score:payoffScore},
+      {name:"Recovery factor", score:recoveryScore}
+    ];
+    var overall=axes.reduce(function(s,a){return s+a.score;},0)/axes.length;
+    return {axes:axes, overall:overall};
+  }
+  function radarChart(axes,size){
+    var cx=size/2, cy=size/2, maxR=size/2-36, N=axes.length;
+    function pt(i,r){ var ang=(-90+i*(360/N))*Math.PI/180; return [cx+r*Math.cos(ang), cy+r*Math.sin(ang)]; }
+    var rings=[0.25,0.5,0.75,1].map(function(f){
+      var pp=[]; for(var i=0;i<N;i++){ var p=pt(i,maxR*f); pp.push(p[0]+","+p[1]); }
+      return '<polygon points="'+pp.join(" ")+'" fill="none" stroke="#3A3229" stroke-width="1" vector-effect="non-scaling-stroke"/>';
+    }).join("");
+    var spokes=axes.map(function(a,i){
+      var p=pt(i,maxR);
+      return '<line x1="'+cx+'" y1="'+cy+'" x2="'+p[0]+'" y2="'+p[1]+'" stroke="#3A3229" stroke-width="1" vector-effect="non-scaling-stroke"/>';
+    }).join("");
+    var dataPts=axes.map(function(a,i){ var p=pt(i,maxR*Math.max(0,Math.min(100,a.score))/100); return p[0]+","+p[1]; });
+    var labels=axes.map(function(a,i){
+      var p=pt(i,maxR+22);
+      var anchor = Math.abs(p[0]-cx)<4 ? "middle" : (p[0]>cx?"start":"end");
+      return '<text x="'+p[0]+'" y="'+p[1]+'" text-anchor="'+anchor+'" dominant-baseline="middle" font-family="IBM Plex Mono, monospace" font-size="10" fill="#948A78">'+esc(a.name)+'</text>';
+    }).join("");
+    return '<svg viewBox="0 0 '+size+' '+size+'" class="radar-svg" role="img" aria-label="Edge score radar">'+
+      rings+spokes+
+      '<polygon points="'+dataPts.join(" ")+'" fill="rgba(207,155,63,.22)" stroke="#CF9B3F" stroke-width="2" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>'+
+      labels+'</svg>';
+  }
+  function edgeScoreSection(){
+    var es=edgeScore();
+    return '<section class="sect"><div class="eye">Composite read</div><h2>Edge score</h2>'+
+      '<p class="lede">A single 0–100 read blending win rate, profit factor, day-to-day consistency, drawdown control, payoff ratio and recovery factor. A heuristic summary of shape, not a forecast — always the full log.</p>'+
+      '<div class="card"><div class="edge-wrap">'+
+      radarChart(es.axes,280)+
+      '<div class="edge-score-box"><div class="edge-score-num">'+es.overall.toFixed(1)+'</div>'+
+      '<div class="escore-bar"><div class="escore-dot" style="left:'+Math.max(2,Math.min(98,es.overall))+'%"></div></div>'+
+      '<div class="dv-sub" style="text-align:center;margin-top:8px">out of 100</div></div>'+
+      '</div></div></section>';
+  }
+  function calendarSection(){
+    var months=windowKeys("monthly");
+    if(!months.length) return "";
+    var idx=Math.min(months.length-1, Math.max(0, months.length-1-state.calOffset));
+    var mk=months[idx];
+    var label=new Date(mk+"-01T00:00:00").toLocaleDateString(undefined,{month:"long",year:"numeric"});
+    var dayMap={};
+    state.trades.forEach(function(t){ if(t.date.slice(0,7)===mk){ dayMap[t.date]=(dayMap[t.date]||0)+pts(t); } });
+    var vals=Object.keys(dayMap).map(function(k){return Math.abs(dayMap[k]);});
+    var maxAbs=vals.length?Math.max.apply(null,vals):1;
+
+    var first=new Date(mk+"-01T00:00:00");
+    var startDow=first.getDay();
+    var daysInMonth=new Date(first.getFullYear(),first.getMonth()+1,0).getDate();
+
+    var cells="";
+    for(var i=0;i<startDow;i++) cells+='<div class="cal-cell cal-off"></div>';
+    for(var d=1; d<=daysInMonth; d++){
+      var ds=mk+"-"+(d<10?"0"+d:d);
+      var has_=Object.prototype.hasOwnProperty.call(dayMap,ds);
+      var v=has_?dayMap[ds]:0;
+      var op=has_?Math.max(.18,Math.min(1,Math.abs(v)/maxAbs)):0;
+      var bg=has_ ? (v>=0?"rgba(127,169,129,"+op+")":"rgba(192,107,84,"+op+")") : "transparent";
+      cells+='<div class="cal-cell'+(has_?"":" cal-off")+'" style="background:'+bg+'" title="'+esc(ds)+(has_?": "+fmt(v)+" pts":"")+'">'+
+        '<div class="cal-d">'+d+'</div>'+(has_?'<div class="cal-v '+cls(v)+'">'+fmt(v)+'</div>':'')+'</div>';
+    }
+    var head=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(function(x){ return '<div class="cal-dow">'+x+'</div>'; }).join("");
+
+    return '<section class="sect"><div class="eye">Day by day</div><h2>Calendar</h2>'+
+      '<p class="lede">Net points per day this month. Darker means bigger, in either direction.</p>'+
+      '<div class="card">'+
+      '<div class="winnav" style="margin-bottom:14px">'+
+        '<button class="arrow" data-act="calolder" '+(idx<=0?"disabled":"")+'>&#8249;</button>'+
+        '<div class="hero-eye" style="text-align:center">'+esc(label)+'</div>'+
+        '<button class="arrow" data-act="calnewer" '+(idx>=months.length-1?"disabled":"")+'>&#8250;</button>'+
+      '</div>'+
+      '<div class="cal-grid cal-head">'+head+'</div>'+
+      '<div class="cal-grid">'+cells+'</div>'+
+      '</div></section>';
+  }
+  function balanceSection(){
+    var acc=state.account;
+    var P=periods("daily");
+    var run=0, peak=acc.startingBalance;
+    var balSeries=[], ddSeries=[];
+    P.forEach(function(p){
+      run += p.pts*acc.pointValue;
+      var b=acc.startingBalance+run;
+      if(b>peak) peak=b;
+      balSeries.push(b); ddSeries.push(b-peak);
+    });
+    var lastBal=balSeries.length?balSeries[balSeries.length-1]:acc.startingBalance;
+    var lastDD=ddSeries.length?Math.min.apply(null,ddSeries):0;
+    var stroke=lastBal>=acc.startingBalance?"#7FA981":"#C06B54";
+
+    return '<div class="grid2 sect">'+
+      '<div><div class="eye">Equity</div><h3>Account balance</h3><div class="card">'+
+        '<div class="hero-big" style="font-size:30px;text-align:left">'+money(lastBal)+'</div>'+
+        '<div class="hero-unit">starting '+money(acc.startingBalance)+
+          (acc.pointValue!==1?' · $'+acc.pointValue+'/pt':'')+
+          ' — set in <button class="link" data-tab="accounts" style="font-size:inherit">Accounts</button></div>'+
+        (balSeries.length>1?sparkline(balSeries,520,100,stroke):'<p class="lede">Needs at least two trading days to draw a curve.</p>')+
+      '</div></div>'+
+      '<div><div class="eye">Worst case so far</div><h3>Drawdown</h3><div class="card">'+
+        '<div class="hero-big neg" style="font-size:30px;text-align:left">'+money(lastDD)+'</div>'+
+        '<div class="hero-unit">peak-to-trough on the balance curve, running</div>'+
+        (ddSeries.length>1?sparkline(ddSeries,520,100,"#C06B54"):'<p class="lede">Needs at least two trading days to draw a curve.</p>')+
+      '</div></div>'+
+    '</div>';
+  }
+
   /* ---------------- PIN lock ---------------- */
   function computeLock(){
     var stored = localStorage.getItem(PIN_KEY);
@@ -664,6 +890,41 @@ tbody tr:hover{background:var(--panel)}
     return '<section class="sect"><div class="eye">Coming next</div><h2>'+esc(title)+'</h2>'+
       '<div class="empty"><h3>'+esc(title)+'</h3><p>'+esc(desc)+'</p></div></section>';
   }
+  function viewAccounts(){
+    var acc=state.account;
+    return '<section class="sect"><div class="eye">Settings</div><h2>Accounts</h2>'+
+      '<p class="lede">Sets the starting balance and $-per-point conversion the Dashboard\'s balance and drawdown charts use. Stored in this browser only — there\'s no live broker connection here.</p>'+
+      '<div class="card">'+
+      '<div class="acc-row"><div class="blab">Starting balance ($)</div><input class="acc-input" id="accBal" inputmode="decimal" value="'+esc(acc.startingBalance)+'" placeholder="10000"></div>'+
+      '<div class="acc-row"><div class="blab">$ per point</div><input class="acc-input" id="accPv" inputmode="decimal" value="'+esc(acc.pointValue)+'" placeholder="1"></div>'+
+      '<div class="acts l"><button class="btn" data-act="accsave">Save</button></div>'+
+      '</div></section>';
+  }
+  function viewAddTrade(){
+    var today=new Date().toISOString().slice(0,10);
+    function opts(arr){ return '<option value="">—</option>'+arr.map(function(x){ return '<option value="'+esc(x)+'">'+esc(x)+'</option>'; }).join(""); }
+    return '<section class="sect"><div class="eye">Log it now</div><h2>Add trade</h2>'+
+      '<p class="lede">Quick entry for a single trade — session, setup, result, and your reasoning. It lands in the same log the workbook import fills, so every dashboard number updates immediately.</p>'+
+      '<div class="card"><div class="form-grid">'+
+        '<div class="f-field"><label>Date</label><input type="date" id="atDate" value="'+today+'"></div>'+
+        '<div class="f-field"><label>Session</label><select id="atSession">'+opts(SESSIONS)+'</select></div>'+
+        '<div class="f-field"><label>Setup</label><select id="atSetup">'+opts(SETUPS)+'</select></div>'+
+        '<div class="f-field"><label>Direction</label><select id="atDirection">'+opts(DIRECTIONS)+'</select></div>'+
+        '<div class="f-field"><label>Day type</label><select id="atDayType">'+opts(DAY_TYPES)+'</select></div>'+
+        '<div class="f-field"><label>Day character</label><select id="atDayChar">'+opts(DAY_CHARS)+'</select></div>'+
+        '<div class="f-field"><label>Entry</label><input inputmode="decimal" id="atEntry" placeholder="4079.20"></div>'+
+        '<div class="f-field"><label>Stop loss</label><input inputmode="decimal" id="atSl" placeholder="4071.00"></div>'+
+        '<div class="f-field"><label>RSI at entry</label><input inputmode="decimal" id="atRsi" placeholder="62"></div>'+
+        '<div class="f-field"><label>Result (points)</label><input inputmode="decimal" id="atPts" placeholder="18.4"></div>'+
+        '<div class="f-field"><label>Result (R)</label><input inputmode="decimal" id="atR" placeholder="1.8"></div>'+
+        '<div class="f-field chk"><input type="checkbox" id="atRule"><label style="margin:0" for="atRule">Broke my rule on this one</label></div>'+
+        '<div class="f-field full"><label>Setup notes / confluence</label><input id="atConfluence" placeholder="Swept the Asian low, reclaimed the 4H FVG"></div>'+
+        '<div class="f-field full"><label>Why — reasoning and lessons</label><textarea id="atNotes" placeholder="What you saw, why you took it, what you’d repeat or fix"></textarea></div>'+
+        '<div class="f-field full"><label>Tags (comma separated)</label><input id="atTags" placeholder="Chased, FOMO entry"></div>'+
+      '</div>'+
+      '<div class="acts l"><button class="btn" data-act="addtrade">Save trade</button></div>'+
+      '</div></section>';
+  }
   function viewBreakdown(){
     var sub=state.breakdownSub;
     var h='<div class="pills">'+
@@ -675,9 +936,10 @@ tbody tr:hover{background:var(--panel)}
 
   function noData(){
     return '<div class="empty"><h3>No journal loaded</h3>'+
-      '<p>Import your XAUUSD Trading Journal workbook and every tab fills in from the Trade Log and Day Log sheets.</p>'+
+      '<p>Import your XAUUSD Trading Journal workbook, or log trades one at a time — either way, every tab fills in.</p>'+
       '<div class="acts"><button class="btn" data-act="pick">Choose workbook</button>'+
-      '<button class="btn g" data-act="godata">How importing works</button></div></div>';
+      '<button class="btn g" data-act="godata">How importing works</button>'+
+      '<button class="btn g" data-tab="addtrade">Add a trade instead</button></div></div>';
   }
 
   /* ---------------- views ---------------- */
@@ -807,6 +1069,10 @@ tbody tr:hover{background:var(--panel)}
         hf("Best trade", ps.best!=null?fmt(ps.best):"\u2014", ps.best!=null?"pos":"dimc")+
         hf("Worst trade", ps.worst!=null?fmt(ps.worst):"\u2014", cls(ps.worst||0))+
       "</div></section>";
+
+    h+=edgeScoreSection();
+    h+=calendarSection();
+    h+=balanceSection();
 
     h+='<section class="sect"><div class="eye">The open questions</div><h2>What\'s paying</h2>'+
       '<p class="lede">These splits always use the <b>full log</b> — all '+state.trades.length+
@@ -979,33 +1245,32 @@ tbody tr:hover{background:var(--panel)}
 
   function viewTrades(){
     if(!state.trades.length) return noData();
-    var h='<section class="sect"><div class="eye">Record</div><h2>All trades</h2>'+
-      '<p class="lede">Every row from the Trade Log, newest first. Hover a row to read its notes below.</p>'+
-      '<div class="scroll"><table><thead><tr>'+
-      "<th>Date</th><th class='right'>#</th><th>Session</th><th>Day type</th><th>Character</th><th>Setup</th><th>Dir</th>"+
-      "<th class='right'>RSI</th><th class='right'>Entry</th><th class='right'>SL</th>"+
-      "<th class='right'>B1</th><th class='right'>B2</th><th class='right'>Total</th><th class='right'>R</th><th>Rule</th>"+
-      "</tr></thead><tbody>";
+    var h='<section class="sect"><div class="eye">Record</div><h2>Journal</h2>'+
+      '<p class="lede">Every trade, newest first, with your reasoning attached. Add new ones from <button class="link" data-tab="addtrade">Add trade</button>.</p>'+
+      '<div class="acts l"><button class="btn g" data-act="csv">Export CSV</button>'+
+      '<button class="btn g" data-act="backupjson">Backup JSON</button>'+
+      '<button class="btn g" data-act="backuppick">Import backup</button></div>';
+
+    h+='<div class="jlist">';
     sorted().reverse().forEach(function(t){
       var tot=pts(t), broke=String(t.ruleBroken||"").toUpperCase().indexOf("Y")===0;
-      h+='<tr title="'+esc(String(t.notes||"").slice(0,300))+'">'+
-        '<td class="mono">'+esc(t.date)+"</td>"+
-        '<td class="mono right">'+esc(t.tradeNo)+"</td>"+
-        "<td>"+(has(t.session)?'<span class="tag">'+esc(t.session)+"</span>":'<span class="dimc">—</span>')+"</td>"+
-        '<td style="font-size:12px">'+esc(t.dayType)+"</td>"+
-        '<td style="font-size:12px">'+esc(t.dayChar||"—")+"</td>"+
-        '<td style="font-size:12px">'+esc(t.setup)+"</td>"+
-        '<td style="font-size:12px">'+esc(t.direction)+"</td>"+
-        '<td class="mono right">'+(has(t.rsi)?n(t.rsi).toFixed(0):"—")+"</td>"+
-        '<td class="mono right">'+(has(t.entry1)?n(t.entry1).toFixed(2):"—")+"</td>"+
-        '<td class="mono right">'+(has(t.sl)?n(t.sl).toFixed(2):"—")+"</td>"+
-        '<td class="mono right '+cls(n(t.res1))+'">'+fmt(n(t.res1),2)+"</td>"+
-        '<td class="mono right '+cls(n(t.res2))+'">'+fmt(n(t.res2),2)+"</td>"+
-        '<td class="mono right '+cls(tot)+'">'+fmt(tot,2)+"</td>"+
-        '<td class="mono right '+cls(R(t))+'">'+fmt(R(t),2)+"</td>"+
-        "<td>"+(broke?'<span class="tag bad">broken</span>':'<span class="dimc">—</span>')+"</td></tr>";
+      var tags=Array.isArray(t.tags)?t.tags:[];
+      h+='<div class="jcard"><div class="jc-head">'+
+        '<span class="jc-pts '+cls(tot)+'">'+fmt(tot,1)+'</span>'+
+        (has(t.resR)?'<span class="tag">'+fmt(n(t.resR),2)+'R</span>':'')+
+        '<span class="dimc mono" style="font-size:11.5px">'+esc(t.date)+'</span>'+
+        (has(t.direction)?'<span class="tag">'+esc(t.direction)+'</span>':'')+
+        (has(t.session)?'<span class="tag">'+esc(t.session)+'</span>':'')+
+        (has(t.setup)?'<span class="tag">'+esc(t.setup)+'</span>':'')+
+        (broke?'<span class="tag bad">rule broken</span>':'')+
+        tags.map(function(tg){ return '<span class="tag">'+esc(tg)+'</span>'; }).join('')+
+        '</div>'+
+        ((has(t.confluence)||has(t.notes)) ? '<div class="jc-why">'+
+          (has(t.confluence)?'<b>'+esc(t.confluence)+'.</b> ':'')+esc(t.notes||"")+'</div>' : '')+
+        '</div>';
     });
-    return h+"</tbody></table></div></section>";
+    h+='</div></section>';
+    return h;
   }
 
   function viewData(){
@@ -1031,6 +1296,11 @@ tbody tr:hover{background:var(--panel)}
       '<div class="acts l"><button class="btn" data-act="xlsx">Download Excel</button>'+
       '<button class="btn g" data-act="csv">Download CSV</button>'+
       '<button class="btn g" data-act="copycsv">Copy CSV text</button></div></div>';
+
+    h+='<div class="card"><h3 style="margin-top:0">Full backup (JSON)</h3>'+
+      '<p class="lede">Unlike the Excel/CSV export, this round-trips everything — trades entered by hand, tags, and your Accounts settings — so it\'s the one to use for moving to a new browser or device.</p>'+
+      '<div class="acts l"><button class="btn g" data-act="backupjson">Download backup</button>'+
+      '<button class="btn g" data-act="backuppick">Restore from backup</button></div></div>';
 
     h+='<div class="card"><h3 style="margin-top:0">Stored copy</h3>'+
       '<p class="lede">The last import is kept in this browser so the dashboard still loads when you come back. Re-import after each trading day to refresh it. Phone and desktop keep separate copies.</p>';
@@ -1073,8 +1343,8 @@ tbody tr:hover{background:var(--panel)}
       state.tab==="breakdown"?viewBreakdown():
       state.tab==="journal"?viewTrades():
       state.tab==="data"?viewData():
-      state.tab==="accounts"?viewStub("Accounts","Track starting balance, live balance and prop-firm account rules here."):
-      state.tab==="addtrade"?viewStub("Add trade","A quick-entry form for logging a trade the moment you close it — symbol, direction, session, setup, and your reasoning."):
+      state.tab==="accounts"?viewAccounts():
+      state.tab==="addtrade"?viewAddTrade():
       state.tab==="review"?viewStub("Review","Weekly retrospective: what worked, what to cut, and your focus for next week, scored against the week's numbers."):
       state.tab==="playbook"?viewStub("Playbook","Your catalogued setups and models, each with its own win rate and expectancy."):
       state.tab==="certificates"?viewStub("Certificates","Funded account pass certificates and payout milestones."):
@@ -1108,6 +1378,10 @@ tbody tr:hover{background:var(--panel)}
     if(e.target.files&&e.target.files[0]) readWorkbook(e.target.files[0]);
     e.target.value="";
   });
+  document.getElementById("backuppick").addEventListener("change",function(e){
+    if(e.target.files&&e.target.files[0]) readBackup(e.target.files[0]);
+    e.target.value="";
+  });
 
   document.addEventListener("click",function(e){
    try{
@@ -1129,6 +1403,43 @@ tbody tr:hover{background:var(--panel)}
     else if(a==="clearno"){ state.confirmClear=false; render(); }
     else if(a==="clearyes"){ state.confirmClear=false; state.trades=[]; state.days=[]; state.imported=null; persist(); }
     else if(a==="breaksub"){ state.breakdownSub=b.dataset.mode; render(); }
+    else if(a==="calolder"){ state.calOffset=state.calOffset+1; render(); }
+    else if(a==="calnewer"){ state.calOffset=Math.max(0,state.calOffset-1); render(); }
+    else if(a==="accsave"){
+      var accB=parseFloat((document.getElementById("accBal")||{}).value);
+      var accP=parseFloat((document.getElementById("accPv")||{}).value);
+      state.account={ startingBalance: isFinite(accB)?accB:0, pointValue: (isFinite(accP)&&accP!==0)?accP:1 };
+      persistAccount();
+      say("Account settings saved.","ok"); render();
+    }
+    else if(a==="addtrade"){
+      var val=function(id){ var el=document.getElementById(id); return el?el.value:""; };
+      var atDate=val("atDate"), atPtsV=val("atPts");
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(atDate)){ state.msg="Pick a date first."; state.msgKind="bad"; render(); return; }
+      if(!has(atPtsV) || isNaN(parseFloat(atPtsV))){ state.msg="Enter a result in points."; state.msgKind="bad"; render(); return; }
+      var tradeNo = state.trades.filter(function(t){ return t.date===atDate; }).length + 1;
+      var tagsRaw = val("atTags");
+      var tags = tagsRaw ? tagsRaw.split(",").map(function(s){ return s.trim(); }).filter(Boolean) : [];
+      state.trades.push({
+        id: "m"+Date.now()+Math.random().toString(36).slice(2,7),
+        date: atDate, tradeNo: tradeNo,
+        session: val("atSession"), setup: val("atSetup"), direction: val("atDirection"),
+        dayType: val("atDayType"), dayChar: val("atDayChar"),
+        rsi: has(val("atRsi"))?n(val("atRsi")):null,
+        entry1: has(val("atEntry"))?n(val("atEntry")):null,
+        sl: has(val("atSl"))?n(val("atSl")):null,
+        totalPts: n(atPtsV), res1: n(atPtsV),
+        resR: has(val("atR"))?n(val("atR")):null,
+        ruleBroken: (document.getElementById("atRule")||{}).checked ? "Y" : "N",
+        confluence: val("atConfluence"), notes: val("atNotes"),
+        tags: tags
+      });
+      state.tab="journal";
+      say("Trade logged.","ok");
+      persist();
+    }
+    else if(a==="backupjson"){ backupJSON(); }
+    else if(a==="backuppick"){ document.getElementById("backuppick").click(); }
     else if(a==="lock" || a==="signout"){
       sessionStorage.removeItem(UNLOCK_KEY);
       state.pinError=""; state.confirmPinReset=false;
@@ -1184,6 +1495,7 @@ tbody tr:hover{background:var(--panel)}
   });
 
   load();
+  loadAccount();
   computeLock();
   if(!state.pinLocked && !state.trades.length) state.tab="data";
   render();
