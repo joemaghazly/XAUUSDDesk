@@ -1066,7 +1066,13 @@ tbody tr:hover{background:var(--panel)}
   function viewAddTrade(){
     var editing = state.editingId ? state.trades.filter(function(t){ return t.id===state.editingId; })[0] : null;
     var today=new Date().toISOString().slice(0,10);
-    function opts(arr,cur){ return '<option value="">—</option>'+arr.map(function(x){ return '<option value="'+esc(x)+'"'+(x===cur?" selected":"")+'>'+esc(x)+'</option>'; }).join(""); }
+    function opts(arr,cur){
+      // If the stored value isn't one of the standard options (older/imported data,
+      // different casing, free text), keep it selectable instead of silently
+      // blanking the field — a blank would get written back and erase it on save.
+      var list = has(cur) && arr.indexOf(cur)===-1 ? arr.concat([cur]) : arr;
+      return '<option value="">—</option>'+list.map(function(x){ return '<option value="'+esc(x)+'"'+(x===cur?" selected":"")+'>'+esc(x)+'</option>'; }).join("");
+    }
     function iv(v){ return has(v)?esc(v):""; }
     var tagsStr = editing && Array.isArray(editing.tags) ? editing.tags.join(", ") : "";
     var ruleChecked = editing && String(editing.ruleBroken||"").toUpperCase().indexOf("Y")===0;
@@ -1617,7 +1623,10 @@ tbody tr:hover{background:var(--panel)}
         say("Trade updated.","ok");
       } else {
         fields.id = "m"+Date.now()+Math.random().toString(36).slice(2,7);
-        fields.tradeNo = state.trades.filter(function(t){ return t.date===atDate; }).length + 1;
+        // Max existing + 1, not count + 1 — count breaks once a same-day trade has
+        // been deleted, since a fresh add would then collide with a surviving tradeNo.
+        var sameDayNos = state.trades.filter(function(t){ return t.date===atDate; }).map(function(t){ return n(t.tradeNo); });
+        fields.tradeNo = (sameDayNos.length ? Math.max.apply(null,sameDayNos) : 0) + 1;
         state.trades.push(fields);
         say("Trade logged.","ok");
       }
